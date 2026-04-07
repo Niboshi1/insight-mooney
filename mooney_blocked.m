@@ -11,7 +11,7 @@ end
 % ---- Session naming ----
 if cfg.ptbOnly
     % PTB-only: no EDF, no Eyelink. Use timestamped base name for logs.
-    baseName = ['ptb_' datestr(now,'yyyymmdd_HHMMSS')];
+    baseName = ['results/ptb_' datestr(now,'yyyymmdd_HHMMSS')];
     subj = 'NA'; run = '1'; %#ok<NASGU>
     dummymode = 1;
 else

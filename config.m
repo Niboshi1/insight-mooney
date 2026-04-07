@@ -1,4 +1,4 @@
-function cfg = config_fixstim()
+function cfg = config()
 %CONFIG_FIXSTIM Central place for experiment constants.
 
 % ---- Mode switches ----

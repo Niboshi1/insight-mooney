@@ -1,4 +1,4 @@
-function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = responseMemoryTrial(window, cfg, keyResponse, blockStartTime)
+function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = responseMemoryTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun)
     quitNow = false;
 
     % Fixation show + in center
@@ -11,6 +11,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     resptext = 'Have you seen this image before? Yes (1) No (2)';
     DrawFormattedText(window, resptext, 'center', 'center', .2);
     Screen('Flip', window);
+    tfun(); % send TTL for familiarity prompt
     promptFamiliarTime = GetSecs - blockStartTime;
     
     while true
@@ -18,6 +19,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         if keyIsDown
             temp = KbName(keyCode);
             if isempty(temp(1)) || isequal(temp(1), '1') || isequal(temp(1), '2')
+                sfun(); % send TTL for response
                 keyPressFamiliar = str2double(temp(1));
                 KbReleaseWait(-3);
                 break;
@@ -43,6 +45,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         resptext = 'Were you able to identify it previously? Yes (1) No (2)';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
+        tfun(); % send TTL for recognition prompt
         promptRecognitionTime = GetSecs - blockStartTime;
         
         while true
@@ -50,6 +53,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
             if keyIsDown
                 temp = KbName(keyCode);
                 if isempty(temp(1)) || isequal(temp(1), '1') || isequal(temp(1), '2')
+                    sfun(); % send TTL for response
                     keyPressRecognition = str2double(temp(1));
                     KbReleaseWait(-3);
                     break;
@@ -75,6 +79,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         resptext = 'Please answer what you saw';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
+        tfun(); % send TTL for answer prompt
         promptAnswerTime = GetSecs - blockStartTime;
         
         promptStartTime = GetSecs;

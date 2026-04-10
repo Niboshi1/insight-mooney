@@ -1,9 +1,7 @@
-function cleanup_all(window, ptbOnly, logFID)
+function cleanup_all(window, logFID)
     try Screen('CloseAll'); catch, end
     try
-        if ~ptbOnly
-            Eyelink('Shutdown');
-        end
+        Eyelink('Shutdown');
     catch
     end
     ListenChar(0);

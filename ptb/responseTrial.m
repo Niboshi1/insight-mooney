@@ -1,4 +1,4 @@
-function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockStartTime)
+function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun)
     quitNow = false;
 
     if keyResponse % if answered
@@ -12,6 +12,7 @@ function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockSt
         resptext = 'Please answer what you saw';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
+        tfun(); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
         
         promptStartTime = GetSecs;
@@ -37,6 +38,7 @@ function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockSt
             if keyIsDown
                 temp = KbName(keyCode);
                 if isempty(cfg.answerkey) || isequal(temp(1), cfg.answerkey)
+                    sfun(); % send TTL for response
                     return;
                 elseif isequal(temp(1), 'q')
                     quitNow = true;

@@ -1,4 +1,10 @@
 function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = responseMemoryTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun)
+    % Init outputs    
+    promptFamiliarTime = Inf;
+    keyPressFamiliar = 0;
+    promptRecognitionTime = Inf;
+    keyPressRecognition = 0;
+    promptAnswerTime = Inf;
     quitNow = false;
 
     % Fixation show + in center
@@ -31,9 +37,6 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     end
 
     % If answered familiar, ask for their previous response
-    promptRecognitionTime = Inf;
-    keyPressRecognition = 2;
-
     if keyPressFamiliar == 1
         % Fixation show + in center
         DrawFormattedText(window, '+', 'center', 'center', .2);
@@ -66,8 +69,6 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     end
 
     % If they said they recognize, prompt them to answer
-    promptAnswerTime = Inf;
-
     if keyPressRecognition == 1
         % Fixation show + in center
         DrawFormattedText(window, '+', 'center', 'center', .2);

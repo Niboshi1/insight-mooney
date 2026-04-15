@@ -1,5 +1,5 @@
-function el = SetupAndCalibrate(window, cfg, dummymode)
-
+function el = eyelinkCalibrate(window, cfg, dummymode)
+    %% Calibrate
     el = EyelinkInitDefaults(window);
 
     el.calibrationtargetsize  = 3;

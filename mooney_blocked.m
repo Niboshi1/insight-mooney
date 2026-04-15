@@ -61,7 +61,7 @@ function mooney_blocked()
 
             % Terminate
             if quitNow
-                cleanup_all(window, logFID);
+                cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 
@@ -85,7 +85,7 @@ function mooney_blocked()
 
             % Terminate
             if quitNow
-                cleanup_all(window, logFID);
+                cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 
@@ -98,18 +98,6 @@ function mooney_blocked()
     end
 
     %% STEP 4: Cleanup
-
-    % Shutdown Eyelink
-    Eyelink('SetOfflineMode');
-    Eyelink('Command', 'clear_screen 0');
-    WaitSecs(0.5);
-    Eyelink('CloseFile');
-    transferFile(window, cfg, el, dummymode, baseName);
-    try Eyelink('Shutdown'); catch, end    % Shut down Eyelink connection
-    try Screen('CloseAll'); catch, end     % Close all open screens using Psychtoolbox
-    ListenChar(0);                         % Re-enable keyboard input
-    ShowCursor;                            % Show the cursor (it may be hidden during the experiment)
-    if ~IsOctave; commandwindow; end       % Open the command window if not running in Octave
-    if ~isempty(logFID) && logFID > 0; fclose(logFID); end   % Close the log file if the file ID is valid
+    cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
 
 end

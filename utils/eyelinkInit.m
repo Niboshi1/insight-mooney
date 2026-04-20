@@ -1,4 +1,4 @@
-function dummymode = eyelinkInit(cfg, edfFile)
+function dummymode = eyelinkInit(edfFile)
     %% Check EyeLink connection
     dummymode = 0;
     EyelinkInit(dummymode);

@@ -14,7 +14,7 @@ function mooney_blocked()
     cfg.logDir = logDir;
 
     % Init Eyelink
-    dummymode = eyelinkInit(cfg, edfFile);
+    dummymode = eyelinkInit(edfFile);
 
     % Init Psychtoolbox
     PsychDefaultSetup(2);

@@ -8,8 +8,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     quitNow = false;
 
     % Fixation show + in center
-    DrawFormattedText(window, '+', 'center', 'center', .2);
-    Screen('Flip', window);
+    draw_cross(window, cfg);
     fixPresentationTime = GetSecs - blockStartTime;
     WaitSecs(1 + randn); % mean 3s sd 1s
 
@@ -39,8 +38,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     % If answered familiar, ask for their previous response
     if keyPressFamiliar == 1
         % Fixation show + in center
-        DrawFormattedText(window, '+', 'center', 'center', .2);
-        Screen('Flip', window);
+        draw_cross(window, cfg);
         fixPresentationTime = GetSecs - blockStartTime;
         WaitSecs(1 + randn); % mean 3s sd 1s
 
@@ -71,8 +69,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     % If they said they recognize, prompt them to answer
     if keyPressRecognition == 1
         % Fixation show + in center
-        DrawFormattedText(window, '+', 'center', 'center', .2);
-        Screen('Flip', window);
+        draw_cross(window, cfg);
         fixPresentationTime = GetSecs - blockStartTime;
         WaitSecs(1 + randn); % mean 3s sd 1s
 

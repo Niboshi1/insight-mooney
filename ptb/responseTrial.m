@@ -3,8 +3,7 @@ function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockSt
 
     if keyResponse % if answered
         % Fixation show + in center
-        DrawFormattedText(window, '+', 'center', 'center', .2);
-        Screen('Flip', window);
+        draw_cross(window, cfg);
         fixPresentationTime = GetSecs - blockStartTime;
         WaitSecs(3 + randn); % mean 3s sd 1s
 

@@ -13,8 +13,7 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
     end
 
     % Fixation show + in center
-    DrawFormattedText(window, '+', 'center', 'center', .2);
-    Screen('Flip', window); % show fixation
+    draw_cross(window, cfg);
     Eyelink('Message', 'CROSS_ONSET'); % log fixation onset to eyelink
     tfun(); % send TTL for fixation onset
     fixPresentationTime = GetSecs - blockStartTime;

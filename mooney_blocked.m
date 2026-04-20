@@ -7,6 +7,11 @@ function mooney_blocked()
 
     % Get session info
     [edfFile, taskMode, subsetId] = prompt_info();
+    cfg.edfFile = edfFile; cfg.taskMode = taskMode; cfg.subsetId = subsetId;
+
+    % Init logs
+    [logFID, logDir] = init_logs(edfFile, taskMode, subsetId, cfg.resultsDir);
+    cfg.logDir = logDir;
 
     % Init Eyelink
     dummymode = eyelinkInit(cfg, edfFile);
@@ -28,9 +33,6 @@ function mooney_blocked()
     % Eyelink setup and calibration
     el = eyelinkCalibrate(window, cfg, dummymode);
    
-    % Init logs
-    logFID = init_logs(edfFile, taskMode);
-
     % Load stimuli
     mooneyImages = load_mooney(window, cfg.stimDir, cfg.targetWidth);
 

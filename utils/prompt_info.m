@@ -1,10 +1,10 @@
-function [edfFile, taskMode, subsetId, subj, run] = prompt_info()
+function [edfFile, taskMode, subsetId] = prompt_info()
     %% Collect session inputs
 
-    taskMode = getNumericInput('Main?', 'Version', '1');
-    subsetId = getNumericInput('Mooney subset', 'Version', '1');
-    subj     = getTextInput('Enter Subjid', 'Create EDF file', '99');
-    run      = getTextInput('Enter Run', 'Create EDF file', '1');
+    taskMode = getNumericInput('Recognition(1) or Memory(2)', 'Task Mode', '1');
+    subsetId = getTextInput('Mooney subset (1-5)', 'Subset ID', '1');
+    subj     = getTextInput('Enter Subjid', 'Subject ID', '99');
+    run      = getTextInput('Enter Run', 'Run Number', '1');
 
     %% Build EDF filename
 

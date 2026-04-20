@@ -17,8 +17,12 @@ function transferFile(window, cfg, el, dummymode, edfFile)
             if status > 0
                 fprintf('EDF file size: %.1f KB\n', status/1024); % Divide file size by 1024 to convert bytes to KB
             end
+
+            % Move the EDF file to the experiment folder
+            movefile(edfFile, cfg.logDir);
+
             % Print transferred EDF file path in Matlab's Command Window
-            fprintf('Data file ''%s.edf'' can be found in ''%s''\n', edfFile, pwd);
+            fprintf('Data file ''%s.edf'' can be found in ''%s''\n', edfFile, cfg.logDir);
         else
             fprintf('No EDF file saved in Dummy mode\n');
         end

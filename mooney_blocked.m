@@ -58,6 +58,7 @@ function mooney_blocked()
     if taskMode == 1
 
         % Recognition task
+        % TODO: add hand switching every n trials
         for trial = 1:numImages
             % Mooney image prensentation
             [fixPresentationTime, stimulusPresentationTime, responseTime, stimEDFTime, keyResponse] = MooneyTrial( ...
@@ -81,6 +82,7 @@ function mooney_blocked()
 
     else
         % Memory task
+        % TODO: add hand switching every n trials
         for trial = 1:numImages
             % Mooney image presentation
             [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = MooneyMemoryTrial( ...

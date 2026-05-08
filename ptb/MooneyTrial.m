@@ -9,7 +9,7 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
 
     % Fixation show + in center
     draw_cross(window, cfg);
-    Eyelink('Message', 'CROSS_ONSET'); % log fixation onset to eyelink
+    Eyelink('Message', 'CROSS_ONSET_PRE_IMG'); % log fixation onset to eyelink
     tfun(); % send TTL for fixation onset
     fixPresentationTime = GetSecs - blockStartTime;
 
@@ -36,7 +36,7 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
             if keyIsDown
                 temp = KbName(keyCode);
                 if isempty(cfg.answerkey) || isequal(temp(1), cfg.answerkey)
-                    Eyelink('Message', 'KEY_PRESS'); % log key press to eyelink
+                    Eyelink('Message', 'KEY_PRESS_INSIGHT'); % log key press to eyelink
                     sfun(); % send TTL for response
                     responseTime = secs - blockStartTime;
                     keyResponse = true;

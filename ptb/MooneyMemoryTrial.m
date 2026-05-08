@@ -1,16 +1,11 @@
 function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = MooneyMemoryTrial( ...
-    trialno, n_trials, window, imageTexture, blockStartTime, cfg, dummymode, tfun, sfun)
+    trialno, n_trials, window, imageTexture, blockStartTime, cfg, tfun, sfun)
 
     Eyelink('Message', 'TRIALID %d', trialno);
     Eyelink('Command', 'record_status_message "TRIAL %d/%d"', trialno, n_trials);
 
     Eyelink('SetOfflineMode');
     Eyelink('Command', 'clear_screen 0');
-
-    if dummymode == 0
-        Eyelink('SetOfflineMode');
-        Eyelink('StartRecording');
-    end
 
     % Fixation show + in center
     draw_cross(window, cfg);
@@ -53,10 +48,5 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
     
     Eyelink('Message', 'END_STIMULUS'); % log stimulus offset to eyelink
     tfun(); % send TTL for stimulus offset
-
-    % Stop recording and wait
-    WaitSecs(0.1);
-    Eyelink('StopRecording');
-    WaitSecs(0.1);
 
 end

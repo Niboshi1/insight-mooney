@@ -47,6 +47,13 @@ function mooney_blocked()
     numImages = length(mooneyImages);
 
     %% STEP 3: Loop through trials
+        
+    if dummymode == 0
+        Eyelink('SetOfflineMode');
+        WaitSecs(0.5);
+        Eyelink('StartRecording');
+    end
+
     % Check task mode
     if taskMode == 1
 
@@ -55,7 +62,7 @@ function mooney_blocked()
             % Mooney image prensentation
             [fixPresentationTime, stimulusPresentationTime, responseTime, stimEDFTime, keyResponse] = MooneyTrial( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
-                cfg, dummymode, tfun, sfun);
+                cfg, tfun, sfun);
             
             % Response
             [promptTime, quitNow] = ...
@@ -78,7 +85,7 @@ function mooney_blocked()
             % Mooney image presentation
             [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = MooneyMemoryTrial( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
-                cfg, dummymode, tfun, sfun);
+                cfg, tfun, sfun);
 
             % Response
             [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
@@ -97,6 +104,12 @@ function mooney_blocked()
                 keyPressRecognition, promptAnswerTime, keyResponse);
         end
 
+    end
+    
+    % Stop recording and wait
+    if dummymode == 0
+        WaitSecs(0.1);
+        Eyelink('StopRecording');
     end
 
     %% STEP 4: Cleanup

@@ -34,7 +34,7 @@ function mooney_blocked()
     el = eyelinkCalibrate(window, cfg, dummymode);
    
     % Load stimuli
-    mooneyImages = load_mooney(window, cfg.stimDir, cfg.targetWidth);
+    mooneyImages = load_mooney(window, cfg);
 
     %% STEP 2: Init experiment
     % Instructions and wait for trigger

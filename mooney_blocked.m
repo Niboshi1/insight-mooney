@@ -23,6 +23,9 @@ function mooney_blocked()
     [wwidth, hheight] = Screen('WindowSize', window);
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
 
+    % Init audio
+    pahandle = PsychPortAudio('Open', 18, 2, [], [], 1);
+
     % Init TTL connections
     if dummymode == 0
         [tfun, sfun] = setup_ttl();
@@ -67,11 +70,11 @@ function mooney_blocked()
             
             % Response
             [promptTime, quitNow] = ...
-                responseTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun);
+                responseTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow
-                cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
+                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 
@@ -92,11 +95,11 @@ function mooney_blocked()
             % Response
             [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
                 keyPressRecognition, promptAnswerTime, quitNow] = ...
-                responseMemoryTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun);
+                responseMemoryTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow
-                cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
+                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 
@@ -115,6 +118,6 @@ function mooney_blocked()
     end
 
     %% STEP 4: Cleanup
-    cleanup_all(window, cfg, el, dummymode, edfFile, logFID);
+    cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
 
 end

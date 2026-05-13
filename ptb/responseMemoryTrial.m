@@ -1,4 +1,4 @@
-function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = responseMemoryTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun)
+function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = responseMemoryTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun)
     % Init outputs    
     promptFamiliarTime = Inf;
     keyPressFamiliar = 0;
@@ -87,6 +87,10 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         Eyelink('Message', 'TEXT_PROMPT_QANSWER'); % log prompt onset to eyelink
         tfun(); % send TTL for answer prompt
         promptAnswerTime = GetSecs - blockStartTime;
+
+        % Start audio recording
+        PsychPortAudio('GetAudioData', pahandle, cfg.answerDuration+2);
+        PsychPortAudio('Start', pahandle, 0, 0, 1);
         
         promptStartTime = GetSecs;
         while (GetSecs - promptStartTime) < cfg.answerDuration
@@ -100,4 +104,11 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
             end
         end
 
+        % Stop audio recording and save
+        PsychPortAudio('Stop', pahandle);
+        [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
+        filename = [cfg.logDir, '/', sprintf('%03d', trial), '_memory.wav'];
+        audiowrite(filename, recordedAudio, 44100);
+
+    end
 end

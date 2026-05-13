@@ -1,4 +1,4 @@
-function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockStartTime, tfun, sfun)
+function [promptTime, quitNow] = responseTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun)
     quitNow = false;
 
     % Fixation show + in center
@@ -15,7 +15,11 @@ function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockSt
         Eyelink('Message', 'TEXT_PROMPT_QANSWER'); % log prompt onset to eyelink
         tfun(); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
-        
+
+        % Start audio recording
+        PsychPortAudio('GetAudioData', pahandle, cfg.answerDuration+2);
+        PsychPortAudio('Start', pahandle, 0, 0, 1);
+
         promptStartTime = GetSecs;
         while (GetSecs - promptStartTime) < cfg.answerDuration
             [keyIsDown, ~, keyCode] = KbCheck(-3);
@@ -27,6 +31,13 @@ function [promptTime, quitNow] = responseTrial(window, cfg, keyResponse, blockSt
                 end
             end
         end
+        
+        % Stop audio recording and save
+        PsychPortAudio('Stop', pahandle);
+        [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
+        filename = [cfg.logDir, '/', sprintf('%03d', trial), '_recognition.wav'];
+        audiowrite(filename, recordedAudio, 44100);
+        
 
     else % if not able to solve
         % Prompt for key press TODO: decide on response key

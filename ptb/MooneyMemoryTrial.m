@@ -3,8 +3,6 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
 
     Eyelink('Message', 'TRIALID %d', trialno);
     Eyelink('Command', 'record_status_message "TRIAL %d/%d"', trialno, n_trials);
-
-    Eyelink('SetOfflineMode');
     Eyelink('Command', 'clear_screen 0');
 
     % Fixation show + in center

@@ -4,7 +4,7 @@ function el = eyelinkCalibrate(window, cfg, dummymode)
 
     el.calibrationtargetsize  = 3;
     el.calibrationtargetwidth = 0.7;
-    el.backgroundcolour       = [120 120 120];
+    el.backgroundcolour       = [125/255 125/255 125/255];
     el.calibrationtargetcolour= [0 0 0];
     el.msgfontcolour          = [0 0 0];
 

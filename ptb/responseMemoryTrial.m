@@ -11,7 +11,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     draw_cross(window, cfg);
     Eyelink('Message', 'CROSS_ONSET_POST_IMG'); % log fixation onset to eyelink
     tfun(); % send TTL for fixation onset
-    WaitSecs(1 + randn); % mean 3s sd 1s
+    WaitSecs(3 + randn); % mean 3s sd 1s
 
     % Prompt for familiarity
     resptext = 'Have you seen this image before? Yes (1) No (2)';

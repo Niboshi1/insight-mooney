@@ -27,6 +27,10 @@ function imageTextures = load_mooney(window, cfg)
         imageTextures{i} = Screen('MakeTexture', window, img);
     end
 
+    % Shuffle images
+    rng(42);
+    imageTextures = imageTextures(randperm(numImages));
+
     % Report completion and return textures
     disp('Finished loading images.');
     disp(numImages);

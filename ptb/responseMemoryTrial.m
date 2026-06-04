@@ -44,7 +44,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         draw_cross(window, cfg);
         Eyelink('Message', 'CROSS_ONSET_PRE_QRECOGNITION'); % log fixation onset to eyelink
         tfun(); % send TTL for fixation onset
-        WaitSecs(1 + randn); % mean 3s sd 1s
+        WaitSecs(3 + randn); % mean 3s sd 1s
 
         % Ask if they were able to identify it
         resptext = 'Were you able to identify it previously? Yes (1) No (2)';
@@ -78,7 +78,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         draw_cross(window, cfg);
         Eyelink('Message', 'CROSS_ONSET_PRE_QANSWER'); % log fixation onset to eyelink
         tfun(); % send TTL for fixation onset
-        WaitSecs(1 + randn); % mean 3s sd 1s
+        WaitSecs(3 + randn); % mean 3s sd 1s
 
         % Prompt for vocal response
         resptext = 'Please answer what you saw';

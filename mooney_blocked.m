@@ -24,7 +24,8 @@ function mooney_blocked()
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
 
     % Init audio
-    pahandle = PsychPortAudio('Open', 18, 2, [], [], 1);
+    InitializePsychSound(1);
+    pahandle = PsychPortAudio('Open', cfg.audioChannel, 2, [], [], 1);
 
     % Init TTL connections
     if dummymode == 0

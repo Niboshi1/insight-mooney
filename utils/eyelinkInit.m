@@ -1,5 +1,20 @@
-function SetupSampleData(edfFile, dummymode)
+function dummymode = eyelinkInit(edfFile)
+    %% Check EyeLink connection
+    dummymode = 0;
+    EyelinkInit(dummymode);
+    status = Eyelink('IsConnected');
+    if status < 1
+        dummymode = 1;
+    end
+    
+    %% Open EDF file
 
+    failOpen = Eyelink('OpenFile', edfFile);
+    if failOpen ~= 0
+        error('Cannot create EDF file %s', edfFile);
+    end
+
+    %% Set up Eyelink connection and defaults
     ELsoftwareVersion = 0;
     [ver, versionstring] = Eyelink('GetTrackerVersion');
 

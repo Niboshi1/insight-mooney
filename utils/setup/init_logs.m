@@ -4,7 +4,7 @@ function [logFID, logDir] = init_logs(edfFile, taskmode, subsetId, resultsDir)
     logDir = [resultsDir '/' 'exp_' timestamp];
     mkdir(logDir);
 
-    fprintf(subsetId);
+    fprintf('Loading subset: %s\n', subsetId);
 
     if taskmode == 1
         logFileName = [logDir '/' edfFile '_rec' '_set' subsetId '_log.txt'];

@@ -3,6 +3,8 @@ function [tfun, sfun] = setup_ttl()
 
     try
         ppdev_mex('Open', 1);
+    catch
+        error('Failed to open port.');
     end
 
     duration = 1000; % in microseconds

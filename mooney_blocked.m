@@ -18,8 +18,10 @@ function mooney_blocked()
 
     % Init Psychtoolbox
     PsychDefaultSetup(2);
+    Screen('Preference', 'SkipSyncTests', 0);
     screenNumber = max(Screen('Screens'));
     [window, ~] = PsychImaging('OpenWindow', screenNumber, 125/255);
+    Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     [wwidth, hheight] = Screen('WindowSize', window);
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
 
@@ -42,7 +44,7 @@ function mooney_blocked()
 
     %% STEP 2: Init experiment
     % Instructions and wait for trigger
-    show_instruction(window, taskMode, cfg.triggerkey, tfun);
+    instruction_init(window, taskMode, cfg.triggerkey, tfun);
 
     Screen('FillRect', window, 125/255); Screen('Flip', window);
     WaitSecs(3);
@@ -64,6 +66,12 @@ function mooney_blocked()
         % Recognition task
         % TODO: add hand switching every n trials
         for trial = 1:numImages
+
+            % Hand switch instruction every 5 trials
+            if mod(trial, 5) == 1
+                instruction_handswitch(window, cfg, tfun);
+            end
+
             % Mooney image prensentation
             [fixPresentationTime, stimulusPresentationTime, responseTime, stimEDFTime, keyResponse] = MooneyTrial( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...

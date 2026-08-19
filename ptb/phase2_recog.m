@@ -30,13 +30,13 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
 
     while (GetSecs - startTime) < cfg.imageMemoryDuration
         if ~keyResponse
-            [keyIsDown, ~, keyCode] = KbCheck(-3);
+            [keyIsDown, secs, keyCode] = KbCheck(-3);
             if keyIsDown
                 temp = KbName(keyCode);
                 if isempty(cfg.answerkey) || isequal(temp(1), cfg.answerkey)
                     Eyelink('Message', 'KEY_PRESS_MEMORY'); % log key press to eyelink
                     sfun(); % send TTL for response
-                    responseTime = GetSecs - blockStartTime;
+                    responseTime = secs - blockStartTime;
                     keyResponse = true;
                     KbReleaseWait(-3);
                 end

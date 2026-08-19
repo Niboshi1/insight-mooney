@@ -81,8 +81,7 @@ function mooney_blocked()
     % Check task mode
     if taskMode == 1
 
-        % Recognition task
-        % TODO: add hand switching every n trials
+        % Recognition task phase 1
         for trial = 1:numImages
 
             % Hand switch instruction every 5 trials
@@ -118,10 +117,22 @@ function mooney_blocked()
                 suddennessTime, suddennessRating, confidenceTime, confidenceRating);
         end
 
-    else
-        % Memory task
-        % TODO: add hand switching every n trials
+    elif taskMode == 2
+        % Memory task phase 2
         for trial = 1:numImages
+
+            % Hand switch instruction every 5 trials
+            if mod(trial, 5) == 1
+                instruction_handswitch(window, cfg, tfun);
+                if strcmp(cfg.handNow, 'left')
+                    cfg.handNow = 'right';
+                elseif strcmp(cfg.handNow, 'right')
+                    cfg.handNow = 'left';
+                else
+                    Error('Current hand not set in config');
+                end
+            end
+
             % Mooney image presentation
             [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase2_recog( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...

@@ -98,13 +98,13 @@ function mooney_blocked()
             end
 
             % Mooney image prensentation
-            [fixPresentationTime, stimulusPresentationTime, responseTime, stimEDFTime, keyResponse] = MooneyTrial( ...
+            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase1_recog( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
                 cfg, tfun, sfun);
             
             % Response
-            [promptTime, quitNow] = ...
-                responseTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
+            [promptTime, suddennessRating, suddennessTime, confidenceRating, confidenceTime, quitNow] = ...
+                phase1_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow
@@ -112,9 +112,10 @@ function mooney_blocked()
                 return;
             end
 
-            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\n', ...
+            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
                 trial, fixPresentationTime, stimulusPresentationTime, ...
-                stimEDFTime, responseTime, promptTime, keyResponse);
+                stimEDFTime, responseTime, promptTime, keyResponse, ...
+                suddennessTime, suddennessRating, confidenceTime, confidenceRating);
         end
 
     else
@@ -122,14 +123,14 @@ function mooney_blocked()
         % TODO: add hand switching every n trials
         for trial = 1:numImages
             % Mooney image presentation
-            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = MooneyMemoryTrial( ...
+            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase2_recog( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
                 cfg, tfun, sfun);
 
             % Response
             [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
                 keyPressRecognition, promptAnswerTime, quitNow] = ...
-                responseMemoryTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
+                phase2_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow

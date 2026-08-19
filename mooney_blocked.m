@@ -27,7 +27,20 @@ function mooney_blocked()
 
     % Init audio
     InitializePsychSound(1);
-    pahandle = PsychPortAudio('Open', cfg.audioChannel, 2, [], [], 1);
+    try
+        pahandle = PsychPortAudio('Open', cfg.audioChannel, 2, [], [], 1);
+    catch audioErr
+        fprintf('\nERROR: Failed to open audio device (channel %d):\n  %s\n', cfg.audioChannel, audioErr.message);
+        fprintf('\nAvailable audio input devices:\n');
+        devices = PsychPortAudio('GetDevices');
+        for d = 1:length(devices)
+            fprintf('  [%d] %s  (inputs: %d, hostAPI: %s)\n', ...
+                devices(d).DeviceIndex, devices(d).DeviceName, ...
+                devices(d).NrInputChannels, devices(d).HostAudioAPIName);
+        end
+        sca;
+        error('mooney_blocked:audioOpenFailed', 'Could not open audio input. See device list above.');
+    end
 
     % Init TTL connections
     if dummymode == 0
@@ -41,6 +54,11 @@ function mooney_blocked()
    
     % Load stimuli
     mooneyImages = load_mooney(window, cfg);
+
+    % Decide which hand to start with
+    hands = {'left', 'right'};
+    cfg.initHand = hands(randi(2));
+    cfg.handNow = cfg.initHand;
 
     %% STEP 2: Init experiment
     % Instructions and wait for trigger
@@ -70,6 +88,13 @@ function mooney_blocked()
             % Hand switch instruction every 5 trials
             if mod(trial, 5) == 1
                 instruction_handswitch(window, cfg, tfun);
+                if strcmp(cfg.handNow, 'left')
+                    cfg.handNow = 'right';
+                elseif strcmp(cfg.handNow, 'right')
+                    cfg.handNow = 'left';
+                else
+                    Error('Current hand not set in config');
+                end
             end
 
             % Mooney image prensentation

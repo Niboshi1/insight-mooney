@@ -16,7 +16,7 @@ function mooney_blocked()
     % Init Eyelink
     dummymode = eyelinkInit(edfFile);
 
-    % Init audio — pick device from list before PTB window opens
+    % Init audio — pick device from list
     InitializePsychSound(1);
     pahandle = [];
 
@@ -87,14 +87,12 @@ function mooney_blocked()
 
     % Decide which hand to start with
     hands = {'left', 'right'};
-    cfg.initHand = hands(randi(2));
-    cfg.handNow = cfg.initHand;
+    cfg.initHand = hands{randi(2)};   % {} extracts the string; () would return a cell
+    cfg.handNow  = cfg.initHand;
 
     %% STEP 2: Init experiment
     % Instructions and wait for trigger
     instruction_init(window, taskMode, cfg.triggerkey, tfun, tutorial);
-
-    %Screen('FillRect', window, 125/255); Screen('Flip', window);
     draw_cross(window, cfg);
     WaitSecs(3);
 

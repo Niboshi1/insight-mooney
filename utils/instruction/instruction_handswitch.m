@@ -4,16 +4,16 @@ function instruction_handswitch(window, cfg, tfun)
     cx     = cfg.wwidth / 2;
     margin = 50;
 
-    if strcmp(cfg.handNow, 'right')
+    if strcmp(cfg.handNow, 'left')
         img          = load_png('assets/handL.png');
-        instruct_text = 'Please use your right hand for response.';
+        instruct_text = 'Please use your left hand for response.';
         img = imresize(img, imgW_pre/size(img,2)/2);
         imgW = size(img, 2);  imgH = size(img, 1);
         imgRect = [cx - imgW - margin, cfg.hheight - imgH - margin, ...
                    cx - margin,        cfg.hheight - margin];
-    elseif strcmp(cfg.handNow, 'left')
+    elseif strcmp(cfg.handNow, 'right')
         img          = load_png('assets/handR.png');
-        instruct_text = 'Please use your left hand for response.';
+        instruct_text = 'Please use your right hand for response.';
         img = imresize(img, imgW_pre/size(img,2)/2);
         imgW = size(img, 2);  imgH = size(img, 1);
         imgRect = [cx + margin,        cfg.hheight - imgH - margin, ...

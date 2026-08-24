@@ -1,10 +1,11 @@
 function img = load_png(img_path)
-    % Load hand switch image
-    [img, ~, alpha] = imread(img_path);
-    alpha = alpha*255;
+    % Read a PNG and return a uint8 RGBA array for Screen('MakeTexture').
+    % If the file has no alpha channel, img is MxNx3 (RGB).
+    [rgb, ~, alpha] = imread(img_path);
 
-    % Invert grayscale and prepare RGBA
-    img = 255 - img;                   % invert grayscale
-    img = repmat(img, [1 1 3]);       % replicate to RGB
-    img(:, :, 4) = alpha;             % append alpha channel
+    if isempty(alpha)
+        img = rgb;                  % no alpha — return RGB as-is
+    else
+        img = cat(3, rgb, alpha);  % append alpha as 4th channel → MxNx4
+    end
 end

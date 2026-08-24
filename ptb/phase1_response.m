@@ -18,10 +18,15 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         tfun(); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
 
-        % Start audio recording
-        PsychPortAudio('GetAudioData', pahandle, cfg.answerDuration+2);
-        PsychPortAudio('Start', pahandle, 0, 0, 1);
+        % Start audio recording (if device is available)
+        % Pre-allocate buffer for max plausible answer duration
+        if ~isempty(pahandle)
+            PsychPortAudio('GetAudioData', pahandle, cfg.maxAnswerDuration);
+            PsychPortAudio('Start', pahandle, 0, 0, 1);
+        end
+        audioStartTime = GetSecs;
 
+        % Wait until triggerkey is pressed
         while true
             [~, keyCode] = KbWait(-3, 2);
             temp = KbName(keyCode);
@@ -30,12 +35,18 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                 break;
             end
         end
-        
-        % Stop audio recording and save
-        PsychPortAudio('Stop', pahandle);
-        [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
-        filename = [cfg.logDir, '/', sprintf('%03d', trial), '_recognition.wav'];
-        audiowrite(filename, recordedAudio, 44100);
+        audioElapsed = GetSecs - audioStartTime;
+
+        % Stop audio recording and save actual elapsed audio (if device is available)
+        if ~isempty(pahandle)
+            PsychPortAudio('Stop', pahandle);
+            [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
+            % Trim to actual recorded duration (samples = elapsed * sampleRate)
+            nSamples = min(size(recordedAudio, 2), round(audioElapsed * 44100));
+            recordedAudio = recordedAudio(:, 1:nSamples);
+            filename = fullfile(cfg.logDir, sprintf('%03d_recognition.wav', trial));
+            audiowrite(filename, recordedAudio', 44100);
+        end
 
         % --- Suddenness rating (1 = sudden / popped out, 5 = gradual / figured it out) ---
         KbReleaseWait(-3);

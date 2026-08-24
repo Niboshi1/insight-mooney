@@ -6,8 +6,8 @@ function mooney_blocked()
     cfg = config();
 
     % Get session info
-    [edfFile, taskMode, subsetId] = prompt_info();
-    cfg.edfFile = edfFile; cfg.taskMode = taskMode; cfg.subsetId = subsetId;
+    [edfFile, taskMode, subsetId, tutorial] = prompt_info();
+    cfg.edfFile = edfFile; cfg.taskMode = taskMode; cfg.subsetId = subsetId; cfg.tutorial = tutorial;
 
     % Init logs
     [logFID, logDir] = init_logs(edfFile, taskMode, subsetId, cfg.resultsDir);
@@ -16,7 +16,57 @@ function mooney_blocked()
     % Init Eyelink
     dummymode = eyelinkInit(edfFile);
 
-    % Init Psychtoolbox
+    % Init audio — done before PTB window so GUI dialogs don't conflict
+    InitializePsychSound(1);
+    pahandle = [];
+    channel  = cfg.audioChannel;
+    while isempty(pahandle)
+        try
+            pahandle = PsychPortAudio('Open', channel, 2, [], [], 1);
+            cfg.audioChannel = channel;
+        catch audioErr
+            fprintf('\nFailed to open audio device [%d]: %s\n', channel, audioErr.message);
+
+            % Build list of input-only devices
+            allDevices   = PsychPortAudio('GetDevices');
+            mask         = arrayfun(@(d) d.NrInputChannels > 0 && d.NrOutputChannels == 0, allDevices);
+            inputDevices = allDevices(mask);
+
+            if isempty(inputDevices)
+                labels = {'Continue without audio', 'Quit'};
+            else
+                deviceLabels = arrayfun(@(d) sprintf('[%d]  %s  (%s)', ...
+                    d.DeviceIndex, d.DeviceName, d.HostAudioAPIName), ...
+                    inputDevices, 'UniformOutput', false);
+                labels = [deviceLabels, {'— Continue without audio —', '— Quit —'}];
+            end
+
+            [sel, ok] = listdlg( ...
+                'ListString',   labels, ...
+                'SelectionMode','single', ...
+                'Name',         'Audio Setup', ...
+                'PromptString', sprintf('Device [%d] failed. Select an input device to retry, or choose an action:', channel), ...
+                'OKString',     'Select', ...
+                'ListSize',     [420 150]);
+
+            if ~ok || isempty(sel)
+                continue;  % dismissed — show dialog again
+            end
+
+            chosen = labels{sel};
+            if contains(chosen, 'Quit')
+                error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
+            elseif contains(chosen, 'Continue without audio')
+                fprintf('Continuing without audio.\n');
+                break;
+            else
+                channel = inputDevices(sel).DeviceIndex;
+                % loop back and try PsychPortAudio('Open') with new channel
+            end
+        end
+    end
+
+    % Init Psychtoolbox window — opened after audio dialogs to avoid conflicts
     PsychDefaultSetup(2);
     Screen('Preference', 'SkipSyncTests', 0);
     screenNumber = max(Screen('Screens'));
@@ -24,23 +74,6 @@ function mooney_blocked()
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     [wwidth, hheight] = Screen('WindowSize', window);
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
-
-    % Init audio
-    InitializePsychSound(1);
-    try
-        pahandle = PsychPortAudio('Open', cfg.audioChannel, 2, [], [], 1);
-    catch audioErr
-        fprintf('\nERROR: Failed to open audio device (channel %d):\n  %s\n', cfg.audioChannel, audioErr.message);
-        fprintf('\nAvailable audio input devices:\n');
-        devices = PsychPortAudio('GetDevices');
-        for d = 1:length(devices)
-            fprintf('  [%d] %s  (inputs: %d, hostAPI: %s)\n', ...
-                devices(d).DeviceIndex, devices(d).DeviceName, ...
-                devices(d).NrInputChannels, devices(d).HostAudioAPIName);
-        end
-        sca;
-        error('mooney_blocked:audioOpenFailed', 'Could not open audio input. See device list above.');
-    end
 
     % Init TTL connections
     if dummymode == 0
@@ -62,7 +95,7 @@ function mooney_blocked()
 
     %% STEP 2: Init experiment
     % Instructions and wait for trigger
-    instruction_init(window, taskMode, cfg.triggerkey, tfun);
+    instruction_init(window, taskMode, cfg.triggerkey, tfun, tutorial);
 
     Screen('FillRect', window, 125/255); Screen('Flip', window);
     WaitSecs(3);
@@ -111,13 +144,13 @@ function mooney_blocked()
                 return;
             end
 
-            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
-                trial, fixPresentationTime, stimulusPresentationTime, ...
+            fprintf(logFID, '%d\t%s\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
+                trial, cfg.handNow, fixPresentationTime, stimulusPresentationTime, ...
                 stimEDFTime, responseTime, promptTime, keyResponse, ...
                 suddennessTime, suddennessRating, confidenceTime, confidenceRating);
         end
 
-    elif taskMode == 2
+    else
         % Memory task phase 2
         for trial = 1:numImages
 
@@ -149,8 +182,8 @@ function mooney_blocked()
                 return;
             end
 
-            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
-                trial, fixPresentationTime, stimulusPresentationTime, stimEDFTime, ...
+            fprintf(logFID, '%d\t%s\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
+                trial, cfg.handNow, fixPresentationTime, stimulusPresentationTime, stimEDFTime, ...
                 responseTime, promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
                 keyPressRecognition, promptAnswerTime, keyResponse);
         end

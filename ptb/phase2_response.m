@@ -88,27 +88,33 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         tfun(); % send TTL for answer prompt
         promptAnswerTime = GetSecs - blockStartTime;
 
-        % Start audio recording
-        PsychPortAudio('GetAudioData', pahandle, cfg.answerDuration+2);
-        PsychPortAudio('Start', pahandle, 0, 0, 1);
-        
-        promptStartTime = GetSecs;
-        while (GetSecs - promptStartTime) < cfg.answerDuration
-            [keyIsDown, ~, keyCode] = KbCheck(-3);
-            if keyIsDown
-                temp = KbName(keyCode);
-                if isequal(temp(1), 'q')
-                    quitNow = true;
-                    return;
-                end
+        % Start audio recording (if device is available)
+        if ~isempty(pahandle)
+            PsychPortAudio('GetAudioData', pahandle, cfg.maxAnswerDuration);
+            PsychPortAudio('Start', pahandle, 0, 0, 1);
+        end
+        audioStartTime = GetSecs;
+
+        % Wait until triggerkey is pressed
+        while true
+            [~, keyCode] = KbWait(-3, 2);
+            temp = KbName(keyCode);
+
+            if isempty(cfg.triggerkey) || (~isempty(temp) && isequal(temp(1), cfg.triggerkey))
+                break;
             end
         end
+        audioElapsed = GetSecs - audioStartTime;
 
-        % Stop audio recording and save
-        PsychPortAudio('Stop', pahandle);
-        [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
-        filename = [cfg.logDir, '/', sprintf('%03d', trial), '_memory.wav'];
-        audiowrite(filename, recordedAudio, 44100);
+        % Stop audio recording and save actual elapsed audio (if device is available)
+        if ~isempty(pahandle)
+            PsychPortAudio('Stop', pahandle);
+            [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
+            nSamples = min(size(recordedAudio, 2), round(audioElapsed * 44100));
+            recordedAudio = recordedAudio(:, 1:nSamples);
+            filename = fullfile(cfg.logDir, sprintf('%03d_memory.wav', trial));
+            audiowrite(filename, recordedAudio', 44100);
+        end
 
     end
 end

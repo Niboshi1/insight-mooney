@@ -11,9 +11,10 @@ function cfg = config()
     cfg.audioChannel = 13; % audio input channel for vocal response recording
 
     % ---- Timing ----
-    cfg.imageDuration    = 1; % maximum duration the image is shown
+    cfg.imageDuration    = 2; % maximum duration the image is shown
     cfg.blankDuration    = 1; % interval between Mooney image presentation and response
     cfg.answerDuration   = 5; % duration for vocal answering
+    cfg.maxAnswerDuration = 120;
 
     % ---- Timing 2 ----
     cfg.imageMemoryDuration = 8;

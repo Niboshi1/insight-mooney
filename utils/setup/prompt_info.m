@@ -1,8 +1,18 @@
-function [edfFile, taskMode, subsetId] = prompt_info()
+function [edfFile, taskMode, subsetId, tutorial] = prompt_info()
     %% Collect session inputs
 
     taskMode = getNumericInput('Recognition(1) or Memory(2)', 'Task Mode', '1');
-    subsetId = getTextInput('Mooney subset (1-5)', 'Subset ID', '1');
+
+    % Ask if this is a tutorial
+    answer = questdlg('Is this a tutorial session?', 'Tutorial', 'Yes', 'No', 'No');
+    if isempty(answer); error('Session cancelled by user'); end
+    tutorial = strcmp(answer, 'Yes');
+    if tutorial
+        subsetId = 'tutorial';
+    else
+        subsetId = getTextInput('Mooney subset (1-5)', 'Subset ID', '1');
+    end
+    
     subj     = getTextInput('Enter Subjid', 'Subject ID', '99');
     run      = getTextInput('Enter Run', 'Run Number', '1');
 

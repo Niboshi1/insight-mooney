@@ -2,7 +2,7 @@
 % Allows for optional destination path which is different from experiment folder
 function transfer_file(window, cfg, el, dummymode, edfFile)
     try
-        if dummymode ==0 % If connected to EyeLink
+        if dummymode == 0 % If connected to EyeLink
             % Show 'Receiving data file...' text until file transfer is complete
             Screen('FillRect', window, el.backgroundcolour); % Prepare background on backbuffer
             Screen('DrawText', window, 'Receiving data file...', 5, cfg.hheight-35, 0); % Prepare text

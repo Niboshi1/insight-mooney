@@ -6,8 +6,8 @@ function mooney_blocked()
     cfg = config();
 
     % Get session info
-    [edfFile, taskMode, subsetId] = prompt_info();
-    cfg.edfFile = edfFile; cfg.taskMode = taskMode; cfg.subsetId = subsetId;
+    [edfFile, taskMode, subsetId, tutorial] = prompt_info();
+    cfg.edfFile = edfFile; cfg.taskMode = taskMode; cfg.subsetId = subsetId; cfg.tutorial = tutorial;
 
     % Init logs
     [logFID, logDir] = init_logs(edfFile, taskMode, subsetId, cfg.resultsDir);
@@ -16,16 +16,61 @@ function mooney_blocked()
     % Init Eyelink
     dummymode = eyelinkInit(edfFile);
 
-    % Init Psychtoolbox
+    % Init audio — pick device from list
+    InitializePsychSound(1);
+    pahandle = [];
+
+    allDevices   = PsychPortAudio('GetDevices');
+    mask         = arrayfun(@(d) d.NrInputChannels > 0 && d.NrOutputChannels == 0, allDevices);
+    inputDevices = allDevices(mask);
+
+    while isempty(pahandle)
+        if isempty(inputDevices)
+            labels = {'— Continue without audio —'};
+        else
+            deviceLabels = arrayfun(@(d) sprintf('[%d]  %s  (%s)', ...
+                d.DeviceIndex, d.DeviceName, d.HostAudioAPIName), ...
+                inputDevices, 'UniformOutput', false);
+            labels = [{'— Continue without audio —'}, deviceLabels];
+        end
+
+        [sel, ok] = listdlg( ...
+            'ListString',   labels, ...
+            'SelectionMode','single', ...
+            'Name',         'Audio Setup', ...
+            'PromptString', 'Select an audio input device:', ...
+            'OKString',     'Select', ...
+            'ListSize',     [420 150]);
+
+        if ~ok || isempty(sel)
+            error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
+        end
+
+        chosen = labels{sel};
+        if contains(chosen, 'Continue without audio')
+            fprintf('Continuing without audio.\n');
+            break;
+        else
+            channel = inputDevices(sel).DeviceIndex;
+            try
+                pahandle = PsychPortAudio('Open', channel, 2, [], [], 1);
+                cfg.audioChannel = channel;
+            catch audioErr
+                fprintf('\nFailed to open device [%d]: %s\nPlease select another device.\n', ...
+                    channel, audioErr.message);
+                % pahandle stays [] — loop re-shows the list
+            end
+        end
+    end
+
+    % Init Psychtoolbox window — opened after audio dialogs to avoid conflicts
     PsychDefaultSetup(2);
+    Screen('Preference', 'SkipSyncTests', 0);
     screenNumber = max(Screen('Screens'));
     [window, ~] = PsychImaging('OpenWindow', screenNumber, 125/255);
+    Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     [wwidth, hheight] = Screen('WindowSize', window);
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
-
-    % Init audio
-    InitializePsychSound(1);
-    pahandle = PsychPortAudio('Open', cfg.audioChannel, 2, [], [], 1);
 
     % Init TTL connections
     if dummymode == 0
@@ -40,11 +85,15 @@ function mooney_blocked()
     % Load stimuli
     mooneyImages = load_mooney(window, cfg);
 
+    % Decide which hand to start with
+    hands = {'left', 'right'};
+    cfg.initHand = hands{randi(2)};   % {} extracts the string; () would return a cell
+    cfg.handNow  = cfg.initHand;
+
     %% STEP 2: Init experiment
     % Instructions and wait for trigger
-    show_instruction(window, taskMode, cfg.triggerkey, tfun);
-
-    Screen('FillRect', window, 125/255); Screen('Flip', window);
+    instruction_init(window, taskMode, cfg.triggerkey, tfun, tutorial);
+    draw_cross(window, cfg);
     WaitSecs(3);
 
     blockStartTime = GetSecs;
@@ -61,17 +110,29 @@ function mooney_blocked()
     % Check task mode
     if taskMode == 1
 
-        % Recognition task
-        % TODO: add hand switching every n trials
+        % Recognition task phase 1
         for trial = 1:numImages
+
+            % Hand switch instruction every 5 trials
+            if mod(trial, 5) == 1
+                instruction_handswitch(window, cfg, tfun);
+                if strcmp(cfg.handNow, 'left')
+                    cfg.handNow = 'right';
+                elseif strcmp(cfg.handNow, 'right')
+                    cfg.handNow = 'left';
+                else
+                    Error('Current hand not set in config');
+                end
+            end
+
             % Mooney image prensentation
-            [fixPresentationTime, stimulusPresentationTime, responseTime, stimEDFTime, keyResponse] = MooneyTrial( ...
+            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase1_recog( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
                 cfg, tfun, sfun);
             
             % Response
-            [promptTime, quitNow] = ...
-                responseTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
+            [promptTime, suddennessRating, suddennessTime, confidenceRating, confidenceTime, quitNow] = ...
+                phase1_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow
@@ -79,24 +140,37 @@ function mooney_blocked()
                 return;
             end
 
-            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\n', ...
-                trial, fixPresentationTime, stimulusPresentationTime, ...
-                stimEDFTime, responseTime, promptTime, keyResponse);
+            fprintf(logFID, '%d\t%s\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
+                trial, cfg.handNow, fixPresentationTime, stimulusPresentationTime, ...
+                stimEDFTime, responseTime, promptTime, keyResponse, ...
+                suddennessTime, suddennessRating, confidenceTime, confidenceRating);
         end
 
     else
-        % Memory task
-        % TODO: add hand switching every n trials
+        % Memory task phase 2
         for trial = 1:numImages
+
+            % Hand switch instruction every 5 trials
+            if mod(trial, 5) == 1
+                instruction_handswitch(window, cfg, tfun);
+                if strcmp(cfg.handNow, 'left')
+                    cfg.handNow = 'right';
+                elseif strcmp(cfg.handNow, 'right')
+                    cfg.handNow = 'left';
+                else
+                    Error('Current hand not set in config');
+                end
+            end
+
             % Mooney image presentation
-            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = MooneyMemoryTrial( ...
+            [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase2_recog( ...
                 trial, numImages, window, mooneyImages{trial}, blockStartTime, ...
                 cfg, tfun, sfun);
 
             % Response
             [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
                 keyPressRecognition, promptAnswerTime, quitNow] = ...
-                responseMemoryTrial(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
+                phase2_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow
@@ -104,8 +178,8 @@ function mooney_blocked()
                 return;
             end
 
-            fprintf(logFID, '%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
-                trial, fixPresentationTime, stimulusPresentationTime, stimEDFTime, ...
+            fprintf(logFID, '%d\t%s\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%d\t%.5f\t%d\t%.5f\t%d\n', ...
+                trial, cfg.handNow, fixPresentationTime, stimulusPresentationTime, stimEDFTime, ...
                 responseTime, promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, ...
                 keyPressRecognition, promptAnswerTime, keyResponse);
         end

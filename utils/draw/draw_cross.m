@@ -1,8 +1,4 @@
 function draw_cross(window,cfg)
-
-    % Set up alpha-blending for smooth (anti-aliased) lines
-    Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-
     % Get the centre coordinate of the window
     xCenter = cfg.wwidth / 2;
     yCenter = cfg.hheight / 2;

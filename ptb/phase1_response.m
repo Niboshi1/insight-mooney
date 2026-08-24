@@ -30,6 +30,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         while true
             [~, keyCode] = KbWait(-3, 2);
             temp = KbName(keyCode);
+            if iscell(temp); temp = temp{1}; end  % KbName can return a cell on multi-key events
 
             if isempty(cfg.triggerkey) || (~isempty(temp) && isequal(temp(1), cfg.triggerkey))
                 break;
@@ -39,7 +40,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
 
         % Stop audio recording and save actual elapsed audio (if device is available)
         if ~isempty(pahandle)
-            PsychPortAudio('Stop', pahandle);
+            PsychPortAudio('Stop', pahandle, 0);  % 0 = stop immediately, don't wait for drain
             [recordedAudio, ~] = PsychPortAudio('GetAudioData', pahandle);
             % Trim to actual recorded duration (samples = elapsed * sampleRate)
             nSamples = min(size(recordedAudio, 2), round(audioElapsed * 44100));

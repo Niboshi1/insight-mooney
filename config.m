@@ -8,12 +8,11 @@ function cfg = config()
     cfg.resultsDir = 'results'; % directory to save results relative to current directory
 
     % ---- Audio input channel ----
-    cfg.audioChannel = 13; % audio input channel for vocal response recording
+    cfg.audioChannel = 0; % audio input channel for vocal response recording
 
     % ---- Timing ----
-    cfg.imageDuration    = 2; % maximum duration the image is shown
+    cfg.imageDuration    = 10; % maximum duration the image is shown
     cfg.blankDuration    = 1; % interval between Mooney image presentation and response
-    cfg.answerDuration   = 5; % duration for vocal answering
     cfg.maxAnswerDuration = 120;
 
     % ---- Timing 2 ----

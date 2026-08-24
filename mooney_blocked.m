@@ -16,52 +16,51 @@ function mooney_blocked()
     % Init Eyelink
     dummymode = eyelinkInit(edfFile);
 
-    % Init audio — done before PTB window so GUI dialogs don't conflict
+    % Init audio — pick device from list before PTB window opens
     InitializePsychSound(1);
     pahandle = [];
-    channel  = cfg.audioChannel;
+
+    allDevices   = PsychPortAudio('GetDevices');
+    mask         = arrayfun(@(d) d.NrInputChannels > 0 && d.NrOutputChannels == 0, allDevices);
+    inputDevices = allDevices(mask);
+
     while isempty(pahandle)
-        try
-            pahandle = PsychPortAudio('Open', channel, 2, [], [], 1);
-            cfg.audioChannel = channel;
-        catch audioErr
-            fprintf('\nFailed to open audio device [%d]: %s\n', channel, audioErr.message);
+        if isempty(inputDevices)
+            labels = {'— Continue without audio —', '— Quit —'};
+        else
+            deviceLabels = arrayfun(@(d) sprintf('[%d]  %s  (%s)', ...
+                d.DeviceIndex, d.DeviceName, d.HostAudioAPIName), ...
+                inputDevices, 'UniformOutput', false);
+            labels = [deviceLabels, {'— Continue without audio —', '— Quit —'}];
+        end
 
-            % Build list of input-only devices
-            allDevices   = PsychPortAudio('GetDevices');
-            mask         = arrayfun(@(d) d.NrInputChannels > 0 && d.NrOutputChannels == 0, allDevices);
-            inputDevices = allDevices(mask);
+        [sel, ok] = listdlg( ...
+            'ListString',   labels, ...
+            'SelectionMode','single', ...
+            'Name',         'Audio Setup', ...
+            'PromptString', 'Select an audio input device:', ...
+            'OKString',     'Select', ...
+            'ListSize',     [420 150]);
 
-            if isempty(inputDevices)
-                labels = {'Continue without audio', 'Quit'};
-            else
-                deviceLabels = arrayfun(@(d) sprintf('[%d]  %s  (%s)', ...
-                    d.DeviceIndex, d.DeviceName, d.HostAudioAPIName), ...
-                    inputDevices, 'UniformOutput', false);
-                labels = [deviceLabels, {'— Continue without audio —', '— Quit —'}];
-            end
+        if ~ok || isempty(sel)
+            error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
+        end
 
-            [sel, ok] = listdlg( ...
-                'ListString',   labels, ...
-                'SelectionMode','single', ...
-                'Name',         'Audio Setup', ...
-                'PromptString', sprintf('Device [%d] failed. Select an input device to retry, or choose an action:', channel), ...
-                'OKString',     'Select', ...
-                'ListSize',     [420 150]);
-
-            if ~ok || isempty(sel)
-                continue;  % dismissed — show dialog again
-            end
-
-            chosen = labels{sel};
-            if contains(chosen, 'Quit')
-                error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
-            elseif contains(chosen, 'Continue without audio')
-                fprintf('Continuing without audio.\n');
-                break;
-            else
-                channel = inputDevices(sel).DeviceIndex;
-                % loop back and try PsychPortAudio('Open') with new channel
+        chosen = labels{sel};
+        if contains(chosen, 'Quit')
+            error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
+        elseif contains(chosen, 'Continue without audio')
+            fprintf('Continuing without audio.\n');
+            break;
+        else
+            channel = inputDevices(sel).DeviceIndex;
+            try
+                pahandle = PsychPortAudio('Open', channel, 2, [], [], 1);
+                cfg.audioChannel = channel;
+            catch audioErr
+                fprintf('\nFailed to open device [%d]: %s\nPlease select another device.\n', ...
+                    channel, audioErr.message);
+                % pahandle stays [] — loop re-shows the list
             end
         end
     end

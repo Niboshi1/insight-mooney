@@ -26,12 +26,12 @@ function mooney_blocked()
 
     while isempty(pahandle)
         if isempty(inputDevices)
-            labels = {'— Continue without audio —', '— Quit —'};
+            labels = {'— Continue without audio —'};
         else
             deviceLabels = arrayfun(@(d) sprintf('[%d]  %s  (%s)', ...
                 d.DeviceIndex, d.DeviceName, d.HostAudioAPIName), ...
                 inputDevices, 'UniformOutput', false);
-            labels = [deviceLabels, {'— Continue without audio —', '— Quit —'}];
+            labels = [{'— Continue without audio —'}, deviceLabels];
         end
 
         [sel, ok] = listdlg( ...
@@ -47,9 +47,7 @@ function mooney_blocked()
         end
 
         chosen = labels{sel};
-        if contains(chosen, 'Quit')
-            error('mooney_blocked:audioOpenFailed', 'Audio setup cancelled.');
-        elseif contains(chosen, 'Continue without audio')
+        if contains(chosen, 'Continue without audio')
             fprintf('Continuing without audio.\n');
             break;
         else
@@ -96,7 +94,8 @@ function mooney_blocked()
     % Instructions and wait for trigger
     instruction_init(window, taskMode, cfg.triggerkey, tfun, tutorial);
 
-    Screen('FillRect', window, 125/255); Screen('Flip', window);
+    %Screen('FillRect', window, 125/255); Screen('Flip', window);
+    draw_cross(window, cfg);
     WaitSecs(3);
 
     blockStartTime = GetSecs;

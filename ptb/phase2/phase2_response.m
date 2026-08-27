@@ -1,6 +1,5 @@
-function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = phase2_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun)
-    % Init outputs    
-    promptFamiliarTime = Inf;
+function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = phase2_response(trial, window, pahandle, cfg, blockStartTime, tfun, sfun)
+    % Init outputs
     keyPressFamiliar = 0;
     promptRecognitionTime = Inf;
     keyPressRecognition = 0;
@@ -25,11 +24,12 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         [keyIsDown, ~, keyCode] = KbCheck(-3);
         if keyIsDown
             temp = KbName(keyCode);
-            if isempty(temp(1)) || isequal(temp(1), '1') || isequal(temp(1), '2')
+            if ~isempty(temp) && any(temp(1) == '12')
                 Eyelink('Message', 'KEY_PRESS_FAMILIAR');
                 sfun(); % send TTL for response
                 keyPressFamiliar = str2double(temp(1));
                 KbReleaseWait(-3);
+                waitSecs(0.3);  % brief pause
                 break;
             elseif isequal(temp(1), 'q')
                 quitNow = true;
@@ -57,12 +57,13 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         while true
             [keyIsDown, ~, keyCode] = KbCheck(-3);
             if keyIsDown
-                temp = KbName(keyCode);
-                if isempty(temp(1)) || isequal(temp(1), '1') || isequal(temp(1), '2')
+                temp = KbName(keyCode);                    
+                if ~isempty(temp) && any(temp(1) == '12')
                     Eyelink('Message', 'KEY_PRESS_RECOGNITION');
                     sfun(); % send TTL for response
                     keyPressRecognition = str2double(temp(1));
                     KbReleaseWait(-3);
+                    waitSecs(0.3);  % brief pause
                     break;
                 elseif isequal(temp(1), 'q')
                     quitNow = true;
@@ -101,7 +102,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
             temp = KbName(keyCode);
             if iscell(temp); temp = temp{1}; end  % KbName can return a cell on multi-key events
 
-            if isempty(cfg.triggerkey) || (~isempty(temp) && isequal(temp(1), cfg.triggerkey))
+            if ~isempty(temp) && isequal(temp(1), cfg.triggerkey)
                 break;
             end
         end

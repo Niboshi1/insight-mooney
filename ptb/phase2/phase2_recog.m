@@ -1,4 +1,4 @@
-function [fixPresentationTime, stimulusPresentationTime, stimPresentationEDFTime, responseTime, keyResponse] = phase1_recog( ...
+function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTime, keyResponse] = phase2_recog( ...
     trialno, n_trials, window, imageTexture, blockStartTime, cfg, tfun, sfun)
 
     Eyelink('Message', 'TRIALID %d', trialno);
@@ -19,8 +19,8 @@ function [fixPresentationTime, stimulusPresentationTime, stimPresentationEDFTime
     [~, imageStart] = Screen('Flip', window);
     Eyelink('Message', 'IMAGE_ONSET'); % log stimulus onset to eyelink
     tfun(); % send TTL for stimulus onset
-
-    stimPresentationEDFTime = (Eyelink('TrackerTime')) * 1000;
+    
+    stimEDFTime = (Eyelink('TrackerTime')) * 1000;
     stimulusPresentationTime = imageStart - blockStartTime;
 
     % Display image for 10 seconds
@@ -28,13 +28,13 @@ function [fixPresentationTime, stimulusPresentationTime, stimPresentationEDFTime
     responseTime = Inf;
     keyResponse = false;
 
-    while (GetSecs - startTime) < cfg.imageDuration
+    while (GetSecs - startTime) < cfg.imageMemoryDuration
         if ~keyResponse
             [keyIsDown, secs, keyCode] = KbCheck(-3);
             if keyIsDown
                 temp = KbName(keyCode);
-                if isempty(cfg.answerkey) || isequal(temp(1), cfg.answerkey)
-                    Eyelink('Message', 'KEY_PRESS_INSIGHT'); % log key press to eyelink
+                if ~isempty(temp) && isequal(temp(1), cfg.answerkey)
+                    Eyelink('Message', 'KEY_PRESS_MEMORY'); % log key press to eyelink
                     sfun(); % send TTL for response
                     responseTime = secs - blockStartTime;
                     keyResponse = true;
@@ -42,6 +42,7 @@ function [fixPresentationTime, stimulusPresentationTime, stimPresentationEDFTime
             end
         end
     end
+    
     Eyelink('Message', 'END_STIMULUS'); % log stimulus offset to eyelink
     tfun(); % send TTL for stimulus offset
 

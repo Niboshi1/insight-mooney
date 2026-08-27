@@ -24,7 +24,7 @@ function instruction_init(window, taskmode, triggerkey, tfun, tutorial)
         [~, keyCode] = KbWait(-3, 2);
         temp = KbName(keyCode);
 
-        if isempty(triggerkey) || isequal(temp(1), triggerkey)
+        if ~isempty(temp) && isequal(temp(1), triggerkey)
             break;
         end
     end

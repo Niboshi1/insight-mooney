@@ -31,7 +31,8 @@ function instruction_handswitch(window, cfg, tfun)
         [~, keyCode] = KbWait(-3, 2);
         temp = KbName(keyCode);
 
-        if isempty(cfg.triggerkey) || (~isempty(temp) && isequal(temp(1), cfg.triggerkey))
+        if ~isempty(temp) && isequal(temp(1), cfg.triggerkey)
+            KbReleaseWait(-3);
             break;
         end
     end

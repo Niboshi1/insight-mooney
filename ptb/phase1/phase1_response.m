@@ -32,9 +32,8 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         while true
             [~, keyCode] = KbWait(-3, 2);
             temp = KbName(keyCode);
-            if iscell(temp); temp = temp{1}; end
-
-            if isempty(cfg.triggerkey) || (~isempty(temp) && isequal(temp(1), cfg.triggerkey))
+            if ~isempty(temp) && isequal(temp(1), cfg.triggerkey)
+                KbReleaseWait(-3);
                 break;
             end
         end
@@ -74,6 +73,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                     suddennessTime   = GetSecs - blockStartTime;
                     Eyelink('Message', sprintf('KEY_PRESS_SUDDENNESS_%d', suddennessRating));
                     sfun();
+                    KbReleaseWait(-3);
                     WaitSecs(0.3);  % brief pause
                     break;
                 elseif ~isempty(temp) && isequal(temp(1), 'q')
@@ -106,6 +106,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                     confidenceTime   = GetSecs - blockStartTime;
                     Eyelink('Message', sprintf('KEY_PRESS_CONFIDENCE_%d', confidenceRating));
                     sfun();
+                    KbReleaseWait(-3);
                     WaitSecs(0.3);  % brief pause
                     break;
                 elseif ~isempty(temp) && isequal(temp(1), 'q')
@@ -129,11 +130,11 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
             [keyIsDown, ~, keyCode] = KbCheck(-3);
             if keyIsDown
                 temp = KbName(keyCode);
-                if isempty(cfg.answerkey) || isequal(temp(1), cfg.answerkey)
+                if ~isempty(temp) && isequal(temp(1), cfg.answerkey)
                     Eyelink('Message', 'KEY_PRESS_NOINSIGHT'); % log prompt onset to eyelink
                     sfun(); % send TTL for response
                     return;
-                elseif isequal(temp(1), 'q')
+                elseif ~isempty(temp) && isequal(temp(1), 'q')
                     quitNow = true;
                     return;
                 end

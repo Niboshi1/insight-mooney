@@ -1,4 +1,4 @@
-function phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, sfun, pahandle, el, dummymode, edfFile, logFID)
+function phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, sfun, pahandle, logFID)
     %% Case 1: Tutorial
     % every step will be controlled by the trigger input from the experiment
     if strcmp(cfg.subsetId, 'tutorial')

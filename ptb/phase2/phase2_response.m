@@ -1,6 +1,5 @@
-function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = phase2_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun)
-    % Init outputs    
-    promptFamiliarTime = Inf;
+function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = phase2_response(trial, window, pahandle, cfg, blockStartTime, tfun, sfun)
+    % Init outputs
     keyPressFamiliar = 0;
     promptRecognitionTime = Inf;
     keyPressRecognition = 0;

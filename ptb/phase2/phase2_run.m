@@ -45,7 +45,7 @@ function phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
 
             % Response
             [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressRecognition, promptAnswerTime, quitNow] = ...
-                phase2_response(trial, window, pahandle, cfg, keyResponse, blockStartTime, tfun, sfun);
+                phase2_response(trial, window, pahandle, cfg, blockStartTime, tfun, sfun);
 
             % Terminate
             if quitNow

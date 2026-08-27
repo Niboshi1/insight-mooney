@@ -112,7 +112,7 @@ function mooney_blocked()
         % Recognition task phase 1
         phase1_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, sfun, pahandle, el, dummymode, edfFile, logFID)
 
-    else
+    elif taskMode == 2
         % Memory task phase 2
         phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, sfun, pahandle, el, dummymode, edfFile, logFID);
 

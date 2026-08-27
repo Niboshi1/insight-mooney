@@ -18,7 +18,6 @@ function phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
 
             % Terminate
             if quitNow
-                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
         end
@@ -50,7 +49,6 @@ function phase2_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
 
             % Terminate
             if quitNow
-                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 

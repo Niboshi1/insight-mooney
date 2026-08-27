@@ -15,9 +15,8 @@ function phase1_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
                 end
             end
             quitNow = phase1_tutorial(window, mooneyImages{trial}, cfg);
-            
+
             if quitNow
-                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
         end
@@ -49,7 +48,6 @@ function phase1_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
 
             % Terminate
             if quitNow
-                cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
                 return;
             end
 

@@ -7,14 +7,14 @@ function instruction_handswitch(window, cfg, tfun)
     if strcmp(cfg.handNow, 'left')
         img          = load_png('assets/handL.png');
         instruct_text = 'Please use your left hand for response.';
-        img = imresize(img, imgW_pre/size(img,2)/2);
+        img = imresize(img, imgW_pre/size(img,2)/4);
         imgW = size(img, 2);  imgH = size(img, 1);
         imgRect = [cx - imgW - margin, cfg.hheight - imgH - margin, ...
                    cx - margin,        cfg.hheight - margin];
     elseif strcmp(cfg.handNow, 'right')
         img          = load_png('assets/handR.png');
         instruct_text = 'Please use your right hand for response.';
-        img = imresize(img, imgW_pre/size(img,2)/2);
+        img = imresize(img, imgW_pre/size(img,2)/4);
         imgW = size(img, 2);  imgH = size(img, 1);
         imgRect = [cx + margin,        cfg.hheight - imgH - margin, ...
                    cx + imgW + margin, cfg.hheight - margin];

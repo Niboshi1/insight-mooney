@@ -7,7 +7,7 @@ function [tfun, sfun] = setup_ttl()
         error('Failed to open port.');
     end
 
-    duration = 1000; % in microseconds
+    duration = 5000; % in microseconds
     address = 1; %hex2dec('3FD8');
     code = bin2dec('000000001'); % assumes logging is on cable 1
     tfun = @() eyelink_trigger(address, code, duration);
@@ -15,7 +15,7 @@ function [tfun, sfun] = setup_ttl()
     % % duration = .001; % 1 ms
     % % address = hex2dec('3FD8');
 
-    duration = 1000;
+    duration = 5000;
     address = 1;
     code = bin2dec('000000010'); % assumes stim is on cable 2
     sfun = @() stim_function(address, code, duration);

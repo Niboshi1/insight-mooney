@@ -13,6 +13,7 @@ function precheck()
     cfg.edfFile = edfFile;
     if ~exist(cfg.resultsDir, 'dir'); mkdir(cfg.resultsDir); end
     cfg.logDir = cfg.resultsDir;
+    logFID = [];
 
     % =========================================================
     %% [1] EyeLink
@@ -274,8 +275,7 @@ function precheck()
         el = EyelinkInitDefaults(window);
         el.backgroundcolour = [125/255 125/255 125/255];
 
-        transfer_file(window, cfg, el, dummymode, edfFile);
-        % transfer_file's internal cleanup calls sca + Eyelink('Shutdown')
+        cleanup_all(window, pahandle, cfg, el, dummymode, edfFile, logFID);
     else
         fprintf('[SKIP] Dummy mode — no EDF to transfer.\n');
         Eyelink('Shutdown');

@@ -150,7 +150,7 @@ function precheck()
                 sprintf('TTL CHECK\n\ntfun  —  pulse %d / 3', i), ...
                 'center', 'center', 0.2);
             Screen('Flip', window);
-            tfun();
+            tfun('TRIGGER SENT');
             fprintf('[tfun] pulse %d sent\n', i);
             WaitSecs(0.25);   % on period
             WaitSecs(0.25);   % off period
@@ -164,7 +164,7 @@ function precheck()
                 sprintf('TTL CHECK\n\nsfun  —  pulse %d / 3', i), ...
                 'center', 'center', 0.2);
             Screen('Flip', window);
-            sfun();
+            sfun('STIM SENT');
             fprintf('[sfun] pulse %d sent\n', i);
             WaitSecs(0.25);
             WaitSecs(0.25);

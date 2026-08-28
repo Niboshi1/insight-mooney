@@ -6,8 +6,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
     %% Fixation between image and prompt
     % Fixation show + in center
     draw_cross(window, cfg);
-    Eyelink('Message', 'CROSS_ONSET_POST_IMG'); % log fixation onset to eyelink
-    tfun(); % send TTL for fixation onset
+    tfun('CROSS_ONSET_POST_IMG'); % send TTL for fixation onset
     WaitSecs(3 + randn); % mean 3s sd 1s
 
     %% Case 1: If the participant was able to solve the Mooney image (keyResponse = true)
@@ -17,8 +16,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         resptext = 'Please answer what you saw';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_QANSWER'); % log prompt onset to eyelink
-        tfun(); % send TTL for response prompt
+        tfun('TEXT_PROMPT_QANSWER'); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
 
         % Start audio recording (if device is available)
@@ -61,8 +59,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                     'sudden (popped out) <-   1   2   3   4   5   -> gradual (figured it out)'];
         DrawFormattedText(window, ratetext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_SUDDENNESS');
-        tfun();
+        tfun('TEXT_PROMPT_SUDDENNESS');
 
         while true
             [keyIsDown, ~, keyCode] = KbCheck(-3);
@@ -71,8 +68,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                 if ~isempty(temp) && any(temp(1) == '12345')
                     suddennessRating = str2double(temp(1));
                     suddennessTime   = GetSecs - blockStartTime;
-                    Eyelink('Message', sprintf('KEY_PRESS_SUDDENNESS_%d', suddennessRating));
-                    sfun();
+                    sfun(sprintf('KEY_PRESS_SUDDENNESS_%d', suddennessRating));
                     KbReleaseWait(-3);
                     WaitSecs(0.3);  % brief pause
                     break;
@@ -94,8 +90,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                     'Not confident <-   1   2   3   4   5   -> Very confident'];
         DrawFormattedText(window, ratetext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_CONFIDENCE');
-        tfun();
+        tfun('TEXT_PROMPT_CONFIDENCE');
 
         while true
             [keyIsDown, ~, keyCode] = KbCheck(-3);
@@ -104,8 +99,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
                 if ~isempty(temp) && any(temp(1) == '12345')
                     confidenceRating = str2double(temp(1));
                     confidenceTime   = GetSecs - blockStartTime;
-                    Eyelink('Message', sprintf('KEY_PRESS_CONFIDENCE_%d', confidenceRating));
-                    sfun();
+                    sfun(sprintf('KEY_PRESS_CONFIDENCE_%d', confidenceRating));
                     KbReleaseWait(-3);
                     WaitSecs(0.3);  % brief pause
                     break;
@@ -122,8 +116,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         resptext = 'Please press "1" key to proceed';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_QKEYPRESS'); % log prompt onset to eyelink
-        tfun(); % send TTL for response prompt
+        tfun('TEXT_PROMPT_QKEYPRESS'); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
 
         while true
@@ -131,8 +124,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
             if keyIsDown
                 temp = KbName(keyCode);
                 if ~isempty(temp) && isequal(temp(1), cfg.answerkey)
-                    Eyelink('Message', 'KEY_PRESS_NOINSIGHT'); % log prompt onset to eyelink
-                    sfun(); % send TTL for response
+                    sfun('KEY_PRESS_NOINSIGHT'); % send TTL for response
                     return;
                 elseif ~isempty(temp) && isequal(temp(1), 'q')
                     quitNow = true;

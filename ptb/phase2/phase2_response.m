@@ -8,16 +8,14 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
 
     % Fixation show + in center
     draw_cross(window, cfg);
-    Eyelink('Message', 'CROSS_ONSET_POST_IMG'); % log fixation onset to eyelink
-    tfun(); % send TTL for fixation onset
+    tfun('CROSS_ONSET_POST_IMG'); % send TTL for fixation onset
     WaitSecs(3 + randn); % mean 3s sd 1s
 
     % Prompt for familiarity
     resptext = 'Have you seen this image before? Yes (1) No (2)';
     DrawFormattedText(window, resptext, 'center', 'center', .2);
     Screen('Flip', window);
-    Eyelink('Message', 'TEXT_PROMPT_QFAMILIAR');
-    tfun(); % send TTL for familiarity prompt
+    tfun('TEXT_PROMPT_QFAMILIAR'); % send TTL for familiarity prompt
     promptFamiliarTime = GetSecs - blockStartTime;
     
     while true
@@ -25,9 +23,8 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
         if keyIsDown
             temp = KbName(keyCode);
             if ~isempty(temp) && any(temp(1) == '12')
-                Eyelink('Message', 'KEY_PRESS_FAMILIAR');
-                sfun(); % send TTL for response
                 keyPressFamiliar = str2double(temp(1));
+                sfun(sprintf('KEY_PRESS_FAMILIAR%d', keyPressFamiliar));
                 KbReleaseWait(-3);
                 waitSecs(0.3);  % brief pause
                 break;
@@ -42,16 +39,14 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     if keyPressFamiliar == 1
         % Fixation show + in center
         draw_cross(window, cfg);
-        Eyelink('Message', 'CROSS_ONSET_PRE_QRECOGNITION'); % log fixation onset to eyelink
-        tfun(); % send TTL for fixation onset
+        tfun('CROSS_ONSET_PRE_QRECOGNITION'); % send TTL for fixation onset
         WaitSecs(3 + randn); % mean 3s sd 1s
 
         % Ask if they were able to identify it
         resptext = 'Were you able to identify it previously? Yes (1) No (2)';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_QRECOGNITION'); % log prompt onset to eyelink
-        tfun(); % send TTL for recognition prompt
+        tfun('TEXT_PROMPT_QRECOGNITION'); % send TTL for recognition prompt
         promptRecognitionTime = GetSecs - blockStartTime;
         
         while true
@@ -59,9 +54,8 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
             if keyIsDown
                 temp = KbName(keyCode);                    
                 if ~isempty(temp) && any(temp(1) == '12')
-                    Eyelink('Message', 'KEY_PRESS_RECOGNITION');
-                    sfun(); % send TTL for response
                     keyPressRecognition = str2double(temp(1));
+                    sfun(sprintf('KEY_PRESS_RECOGNITION_%d', keyPressRecognition)); % send TTL for response
                     KbReleaseWait(-3);
                     waitSecs(0.3);  % brief pause
                     break;
@@ -77,16 +71,14 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     if keyPressRecognition == 1
         % Fixation show + in center
         draw_cross(window, cfg);
-        Eyelink('Message', 'CROSS_ONSET_PRE_QANSWER'); % log fixation onset to eyelink
-        tfun(); % send TTL for fixation onset
+        tfun('CROSS_ONSET_PRE_QANSWER'); % send TTL for fixation onset
         WaitSecs(3 + randn); % mean 3s sd 1s
 
         % Prompt for vocal response
         resptext = 'Please answer what you saw';
         DrawFormattedText(window, resptext, 'center', 'center', .2);
         Screen('Flip', window);
-        Eyelink('Message', 'TEXT_PROMPT_QANSWER'); % log prompt onset to eyelink
-        tfun(); % send TTL for answer prompt
+        tfun('TEXT_PROMPT_QANSWER'); % send TTL for answer prompt
         promptAnswerTime = GetSecs - blockStartTime;
 
         % Start audio recording (if device is available)

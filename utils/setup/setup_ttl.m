@@ -10,7 +10,7 @@ function [tfun, sfun] = setup_ttl()
     duration = 5000; % in microseconds
     address = 1; %hex2dec('3FD8');
     code = bin2dec('000000001'); % assumes logging is on cable 1
-    tfun = @() eyelink_trigger(address, code, duration);
+    tfun = @(message) eyelink_trigger(address, code, duration, message);
 
     % % duration = .001; % 1 ms
     % % address = hex2dec('3FD8');
@@ -18,16 +18,16 @@ function [tfun, sfun] = setup_ttl()
     duration = 5000;
     address = 1;
     code = bin2dec('000000010'); % assumes stim is on cable 2
-    sfun = @() stim_function(address, code, duration);
+    sfun = @(message) stim_function(address, code, duration, message);
 
 end
 
-function eyelink_trigger(port, code, duration)
+function eyelink_trigger(port, code, duration, message)
     lptwrite(port, code, duration);
-    Eyelink('message','TRIGGER SENT');
+    Eyelink('message', message);
 end
 
-function stim_function(port, code, duration)
+function stim_function(port, code, duration, message)
     lptwrite(port, code, duration);
-    % beep;
+    Eyelink('message', message);
 end

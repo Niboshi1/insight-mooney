@@ -9,7 +9,7 @@ function cfg = config()
     cfg.eyelinkAudio = 0;   % 1 = EyeLink calibration beeps on
 
     %% Paths
-    cfg.stimDir    = 'assets/stimulus_set/soft_norm'; % Mooney image root, relative to current directory
+    cfg.stimDir    = 'assets/stimulus_set/mooney'; % Mooney image root, relative to current directory
     cfg.resultsDir = 'results';                       % results root, relative to current directory
 
     %% Audio

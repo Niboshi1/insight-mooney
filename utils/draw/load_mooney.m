@@ -9,7 +9,7 @@ function imageTextures = load_mooney(window, cfg)
     stimPath = fullfile(cfg.stimDir, cfg.subsetId, taskDir);
     fprintf('Loading images from: %s\n', stimPath);
 
-    files = dir(fullfile(stimPath, '*.jpg'));
+    files = dir(fullfile(stimPath, '*.png'));
     filenames = {files.name};
 
     numImages = length(filenames);

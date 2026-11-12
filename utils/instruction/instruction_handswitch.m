@@ -23,7 +23,7 @@ function instruction_handswitch(window, cfg, tfun)
     end
 
     imageTexture = Screen('MakeTexture', window, img);
-    DrawFormattedText(window, instruct_text, 'center', 'center', .2);
+    DrawFormattedText(window, instruct_text, 'center', 'center', cfg.textColor / 255);
     Screen('DrawTexture', window, imageTexture, [], imgRect);
     Screen('Flip', window);
 
@@ -37,7 +37,5 @@ function instruction_handswitch(window, cfg, tfun)
         end
     end
 
-    if ~strcmp(tfun, 'NA')
-        feval(tfun);
-    end
+    tfun(sprintf('HANDSWITCH_%s', upper(cfg.handNow)));
 end

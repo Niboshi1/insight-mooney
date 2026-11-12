@@ -3,7 +3,8 @@ function quitNow = phase1_tutorial(window, imageTexture, cfg)
     quitNow = false;
     
     % Fixation show + in center
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
 
     % Wait for keyboard trigger from experimenter
     while true
@@ -43,7 +44,8 @@ function quitNow = phase1_tutorial(window, imageTexture, cfg)
     end
 
     % Fixation show after image
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
     WaitSecs(3 + randn); % mean 3s sd 1s
 
     % If the participant was able to solve the Mooney image (keyResponse = true)
@@ -69,7 +71,8 @@ function quitNow = phase1_tutorial(window, imageTexture, cfg)
         end
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(1 + randn);
 
         % --- Suddenness rating (1 = sudden / popped out, 5 = gradual / figured it out) ---
@@ -96,7 +99,8 @@ function quitNow = phase1_tutorial(window, imageTexture, cfg)
         end
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(1 + randn);
 
         % --- Confidence rating (1 = not confident, 5 = very confident) ---

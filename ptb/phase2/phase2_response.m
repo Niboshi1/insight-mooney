@@ -7,9 +7,12 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     quitNow = false;
 
     % Fixation show + in center
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
     tfun('CROSS_ONSET_POST_IMG'); % send TTL for fixation onset
-    WaitSecs(3 + randn); % mean 3s sd 1s
+    quitNow = wait_or_quit(max(0, 3 + randn)); % mean 3s sd 1s; 'q' aborts
+    promptFamiliarTime = Inf;
+    if quitNow; return; end
 
     % Prompt for familiarity
     resptext = 'Have you seen this image before? Yes (1) No (2)';
@@ -38,7 +41,8 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     % If answered familiar, ask for their previous response
     if keyPressFamiliar == 1
         % Fixation show + in center
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         tfun('CROSS_ONSET_PRE_QRECOGNITION'); % send TTL for fixation onset
         WaitSecs(3 + randn); % mean 3s sd 1s
 
@@ -70,7 +74,8 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
     % If they said they recognize, prompt them to answer
     if keyPressRecognition == 1
         % Fixation show + in center
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         tfun('CROSS_ONSET_PRE_QANSWER'); % send TTL for fixation onset
         WaitSecs(3 + randn); % mean 3s sd 1s
 

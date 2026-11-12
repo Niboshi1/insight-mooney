@@ -1,20 +1,16 @@
-function [logFID, logDir] = init_logs(edfFile, taskmode, subsetId, resultsDir)
-    % Create directory with timestamp in the name
-    timestamp = datestr(now,'yyyymmdd_HHMMSS');
-    logDir = [resultsDir '/' 'exp_' timestamp];
+function logDir = init_logs(edfFile, taskMode, subsetId, resultsDir)
+    % INIT_LOGS  Create a timestamped results directory for this session.
+    %
+    %   logDir = init_logs(edfFile, taskMode, subsetId, resultsDir)
+    %
+    % The task log file is opened afterwards with open_log (see run.m).
+
+    timestamp = datestr(now, 'yyyymmdd_HHMMSS');
+    logDir    = fullfile(resultsDir, ['exp_' timestamp]);
     mkdir(logDir);
 
-    fprintf('Loading subset: %s\n', subsetId);
-
-    if taskmode == 1
-        logFileName = [logDir '/' edfFile '_rec' '_set' subsetId '_log.txt'];
-        fprintf('Creating log file: %s\n', logFileName);
-        logFID = fopen(logFileName, 'w');
-        fprintf(logFID, 'Trial\tHandNow\tFixation_Onset\tStimulus_Onset\tStimulus_Onset_EDF\tPT_Response_Onset\tPrompt_Post_Response\tAnswered\tPrompt_Suddenness\tPT_Suddenness\tPrompt_Confidence\tPT_Confidence\n');
-
-    else
-        logFileName = [logDir '/' edfFile '_mem' '_set' subsetId '_log.txt'];
-        logFID = fopen(logFileName, 'w');
-        fprintf(logFID, 'Trial\tHandNow\tFixation_Onset_GLOB\tStimulus_Onset_GLOB\tStimulus_Onset_EDF_Time\tResponse_Onset\tPrompt_Familiar_Onset\tKeyFamiliar\tPrompt_Recognition_Onset\tKeyRecognition\tPrompt_Answer_Onset\tAnswered\n');
-    end
+    fprintf('Session:    %s\n', edfFile);
+    fprintf('Task mode:  %s\n', taskMode);
+    fprintf('Subset:     %s\n', subsetId);
+    fprintf('Log dir:    %s\n', logDir);
 end

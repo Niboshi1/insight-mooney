@@ -1,33 +1,53 @@
 function cfg = config()
-    %CONFIG_FIXSTIM Central place for experiment constants.
+    % CONFIG  Shared configuration for the insight-mooney experiment.
+    %
+    % Task-specific settings live in configs/phase1_config.m and
+    % configs/phase2_config.m (chained in run.m).
 
-    % ---- asset images path ----
-    cfg.stimDir = 'assets/stimulus_set/soft_norm'; % directory of Mooney images relative to current directory
+    %% Global
+    cfg.skipsynctest = 0;   % 1 = skip PTB sync tests (debug only)
+    cfg.eyelinkAudio = 0;   % 1 = EyeLink calibration beeps on
 
-    % ---- Results path ----
-    cfg.resultsDir = 'results'; % directory to save results relative to current directory
+    %% Paths
+    cfg.stimDir    = 'assets/stimulus_set/soft_norm'; % Mooney image root, relative to current directory
+    cfg.resultsDir = 'results';                       % results root, relative to current directory
 
-    % ---- Audio input channel ----
-    cfg.audioChannel = 0; % audio input channel for vocal response recording
+    %% Audio
+    cfg.audioChannel      = 0;    % audio input channel for vocal response recording (set in run.m)
+    cfg.maxAnswerDuration = 120;  % s, maximum vocal answer recording
 
-    % ---- Timing ----
-    cfg.imageDuration    = 10; % maximum duration the image is shown
-    cfg.blankDuration    = 1; % interval between Mooney image presentation and response
-    cfg.maxAnswerDuration = 120;
+    %% Colours (8-bit; grey level or [R G B])
+    cfg.itiGray   = 48;  % background grey
+    cfg.textColor = 120;   % on-screen text colour
 
-    % ---- Timing 2 ----
-    cfg.imageMemoryDuration = 8;
+    %% Display geometry / central marker (draw_marker)
+    % SET pxPerDeg to the display's pixels per degree of visual angle
+    % (= viewDist * tan(1 deg) * wwidth / screenWidth, same units).
+    cfg.pxPerDeg    = 40;
+    cfg.markerArmDeg = 0.3;   % balanced marker half-arm length
+    cfg.markerLineW  = 3;     % px
+    cfg.markerColor  = 120;   % 8-bit colour of both cross arms: grey level (scalar) or [R G B]
+    cfg.markerDotDeg = 0.15;  % diameter of the red centre dot (attention check)
 
-    % ---- Stim presentation ----
-    cfg.targetWidth      = 1024;
+    %% Images
+    cfg.targetWidth = 1024;   % px, width of Mooney images after resizing
 
-    % filled in at runtime:
-    cfg.initHand = 'NA';
-    cfg.handNow = 'right';
-    cfg.wwidth = [];
-    cfg.hheight = [];
-    cfg.screenNumber = [];
+    %% Keys
     cfg.triggerkey = 't';
-    cfg.answerkey = '1';
+    cfg.answerkey  = '1';
 
+    %% Runtime fields — populated in run.m
+    cfg.edfFile      = '';
+    cfg.taskMode     = '';   % 'phase1' | 'phase2'
+    cfg.subj         = '';
+    cfg.runNum       = '';
+    cfg.subsetId     = '';
+    cfg.tutorial     = false;
+    cfg.logDir       = '';
+    cfg.initHand     = 'NA';
+    cfg.handNow      = 'right';
+    cfg.wwidth       = [];
+    cfg.hheight      = [];
+    cfg.screenNumber = [];
+    cfg.ifi          = [];   % inter-frame interval (s), measured at PTB init
 end

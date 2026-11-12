@@ -9,6 +9,8 @@ function precheck()
     addpath(genpath(fileparts(mfilename('fullpath'))));
 
     cfg     = config();
+    cfg     = phase1_config(cfg);
+    cfg     = phase2_config(cfg);
     edfFile = 'precheck';
     cfg.edfFile = edfFile;
     if ~exist(cfg.resultsDir, 'dir'); mkdir(cfg.resultsDir); end
@@ -78,7 +80,7 @@ function precheck()
     PsychDefaultSetup(2);
     Screen('Preference', 'SkipSyncTests', 1);
     screenNumber = max(Screen('Screens'));
-    [window, ~] = PsychImaging('OpenWindow', screenNumber, 125/255);
+    [window, ~] = PsychImaging('OpenWindow', screenNumber, cfg.itiGray/255);
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     [wwidth, hheight] = Screen('WindowSize', window);
     cfg.wwidth = wwidth; cfg.hheight = hheight; cfg.screenNumber = screenNumber;
@@ -87,8 +89,8 @@ function precheck()
     if dummymode == 0
         [tfun, sfun] = setup_ttl();
     else
-        tfun = @() fprintf('[DUMMY] tfun pulse\n');
-        sfun = @() fprintf('[DUMMY] sfun pulse\n');
+        tfun = @(msg) fprintf('[DUMMY-tfun] %s\n', msg);
+        sfun = @(msg) fprintf('[DUMMY-sfun] %s\n', msg);
     end
 
     % =========================================================
@@ -205,7 +207,7 @@ function precheck()
     %% Test: Image loading
     % =========================================================
     fprintf('\n--- Image loading test ---\n');
-    cfg.taskMode = 1;
+    cfg.taskMode = 'phase1';
     cfg.subsetId = 'tutorial';
 
     DrawFormattedText(window, 'Loading images...', 'center', 'center', 0.2);

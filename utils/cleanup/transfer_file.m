@@ -1,47 +1,42 @@
-% Function for transferring copy of EDF file to the experiment folder on Display PC.
-% Allows for optional destination path which is different from experiment folder
+% TRANSFER_FILE  Transfer the EDF file from the EyeLink Host PC to the
+% Display PC and move it into the session log directory.
 function transfer_file(window, cfg, el, dummymode, edfFile)
     try
-        if dummymode == 0 % If connected to EyeLink
-            % Show 'Receiving data file...' text until file transfer is complete
-            Screen('FillRect', window, el.backgroundcolour); % Prepare background on backbuffer
-            Screen('DrawText', window, 'Receiving data file...', 5, cfg.hheight-35, 0); % Prepare text
-            Screen('Flip', window); % Present text
-            fprintf('Receiving data file ''%s.edf''\n', edfFile); % Print some text in Matlab's Command Window
-            
-            % Transfer EDF file to Host PC
-            % [status =] Eyelink('ReceiveFile',['src'], ['dest'], ['dest_is_path'])
+        if dummymode == 0
+            % Show status message while file transfers
+            Screen('FillRect', window, el.backgroundcolour);
+            Screen('DrawText', window, 'Receiving data file...', 5, cfg.hheight-35, cfg.textColor / 255);
+            Screen('Flip', window);
+            fprintf('Receiving data file ''%s.edf''\n', edfFile);
+
             status = Eyelink('ReceiveFile');
-            
-            % Check if EDF file has been transferred successfully and print file size in Matlab's Command Window
+
             if status > 0
-                fprintf('EDF file size: %.1f KB\n', status/1024); % Divide file size by 1024 to convert bytes to KB
+                fprintf('EDF file size: %.1f KB\n', status/1024);
             end
 
-            % Move the EDF file to the experiment folder if it exists in the current directory
             if exist([edfFile, '.edf'], 'file')
-                fprintf('Moving ''%s.edf'' to experiment folder...\n', edfFile);
+                fprintf('Moving ''%s.edf'' to %s\n', edfFile, cfg.logDir);
                 movefile([edfFile, '.edf'], cfg.logDir);
             else
-                fprintf('EDF file ''%s.edf'' not found.', edfFile);
+                fprintf('[WARN] EDF file ''%s.edf'' not found in current directory.\n', edfFile);
             end
 
-            % Print transferred EDF file path in Matlab's Command Window
-            fprintf('Data file ''%s.edf'' can be found in ''%s''\n', edfFile, cfg.logDir);
+            fprintf('Data file ''%s.edf'' saved to ''%s''\n', edfFile, cfg.logDir);
         else
-            fprintf('No EDF file saved in Dummy mode\n');
+            fprintf('[INFO] Dummy mode — no EDF file to transfer.\n');
         end
-        cleanup;
-    catch % Catch a file-transfer error and print some text in Matlab's Command Window
-        fprintf('Problem receiving data file ''%s.edf''\n', edfFile);
-        cleanup;
+        cleanup_screen;
+    catch
+        fprintf('[ERROR] Problem receiving EDF file ''%s.edf''\n', edfFile);
+        cleanup_screen;
         psychrethrow(psychlasterror);
     end
 end
 
-function cleanup
-    sca; % PTB's wrapper for Screen('CloseAll') & related cleanup, e.g. ShowCursor
-    Eyelink('Shutdown'); % Close EyeLink connection
-    ListenChar(0); % Restore keyboard output to Matlab
-    if ~IsOctave; commandwindow; end % Bring Command Window to front
+function cleanup_screen
+    sca;
+    Eyelink('Shutdown');
+    ListenChar(0);
+    if ~IsOctave; commandwindow; end
 end

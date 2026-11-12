@@ -3,7 +3,8 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     quitNow = false;
 
     % Fixation show + in center
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
 
     % Wait for keyboard trigger from experimenter
     while true
@@ -44,7 +45,8 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     end
 
     % Fixation after image
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
     WaitSecs(3 + randn); % mean 3s sd 1s
 
     % --- Familiarity prompt ---
@@ -75,7 +77,8 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     if keyPressFamiliar == 1
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(3 + randn); % mean 3s sd 1s
 
         KbReleaseWait(-3);
@@ -104,7 +107,8 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     if keyPressRecognition == 1
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(3 + randn); % mean 3s sd 1s
 
         % Prompt for vocal response

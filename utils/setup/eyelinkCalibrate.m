@@ -4,13 +4,13 @@ function el = eyelinkCalibrate(window, cfg, dummymode)
 
     el.calibrationtargetsize  = 3;
     el.calibrationtargetwidth = 0.7;
-    el.backgroundcolour       = [125/255 125/255 125/255];
+    el.backgroundcolour       = repmat(cfg.itiGray/255, 1, 3);
     el.calibrationtargetcolour= [0 0 0];
     el.msgfontcolour          = [0 0 0];
 
     % Set calibration beeps (0 = sound off, 1 = sound on)
-    el.targetbeep = 0;  % sound a beep when a target is presented
-    el.feedbackbeep = 0;  % sound a beep after calibration or drift check/correction
+    el.targetbeep = cfg.eyelinkAudio;  % sound a beep when a target is presented
+    el.feedbackbeep = cfg.eyelinkAudio;  % sound a beep after calibration or drift check/correction
 
     EyelinkUpdateDefaults(el);
 

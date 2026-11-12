@@ -6,7 +6,8 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
     Eyelink('Command', 'clear_screen 0');
 
     % Fixation show + in center
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
     tfun('CROSS_ONSET_PRE_IMG'); % send TTL for fixation onset
     fixPresentationTime = GetSecs - blockStartTime;
 
@@ -26,7 +27,7 @@ function [fixPresentationTime, stimulusPresentationTime, stimEDFTime, responseTi
     responseTime = Inf;
     keyResponse = false;
 
-    while (GetSecs - startTime) < cfg.imageMemoryDuration
+    while (GetSecs - startTime) < cfg.phase2.imageDuration
         if ~keyResponse
             [keyIsDown, secs, keyCode] = KbCheck(-3);
             if keyIsDown

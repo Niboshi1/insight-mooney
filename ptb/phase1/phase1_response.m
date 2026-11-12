@@ -5,9 +5,11 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
 
     %% Fixation between image and prompt
     % Fixation show + in center
-    draw_cross(window, cfg);
+    draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+    Screen('Flip', window);
     tfun('CROSS_ONSET_POST_IMG'); % send TTL for fixation onset
-    WaitSecs(3 + randn); % mean 3s sd 1s
+    quitNow = wait_or_quit(max(0, 3 + randn)); % mean 3s sd 1s; 'q' aborts
+    if quitNow; promptTime = NaN; return; end
 
     %% Case 1: If the participant was able to solve the Mooney image (keyResponse = true)
     if keyResponse
@@ -49,7 +51,8 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         end
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(1 + randn);
 
         % --- Suddenness rating (1 = sudden / popped out, 5 = gradual / figured it out) ---
@@ -80,7 +83,8 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         end
 
         % Fixation interval
-        draw_cross(window, cfg);
+        draw_marker(window, cfg, cfg.wwidth/2, cfg.hheight/2);
+        Screen('Flip', window);
         WaitSecs(1 + randn);
 
         % --- Confidence rating (1 = not confident, 5 = very confident) ---

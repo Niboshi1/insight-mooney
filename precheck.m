@@ -101,7 +101,7 @@ function precheck()
         msg = sprintf(['AUDIO TEST\n\n' ...
                        'Speak now. Recording is active.\n\n' ...
                        'Press  ''%s''  to stop.'], cfg.triggerkey);
-        DrawFormattedText(window, msg, 'center', 'center', 0.2);
+        DrawFormattedText(window, msg, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         % Allocate buffer and start recording
@@ -130,12 +130,12 @@ function precheck()
         audiowrite(audioFile, recordedAudio', 44100);
         fprintf('[OK]   Recorded %.1f s  ->  %s\n', audioElapsed, audioFile);
 
-        DrawFormattedText(window, sprintf('Audio saved: %.1f s', audioElapsed), 'center', 'center', 0.2);
+        DrawFormattedText(window, sprintf('Audio saved: %.1f s', audioElapsed), 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         WaitSecs(1.5);
     else
         fprintf('[SKIP] No audio device.\n');
-        DrawFormattedText(window, 'Audio: SKIPPED (no device selected)', 'center', 'center', 0.2);
+        DrawFormattedText(window, 'Audio: SKIPPED (no device selected)', 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         WaitSecs(1.5);
     end
@@ -150,7 +150,7 @@ function precheck()
         for i = 1:3
             DrawFormattedText(window, ...
                 sprintf('TTL CHECK\n\ntfun  —  pulse %d / 3', i), ...
-                'center', 'center', 0.2);
+                'center', 'center', cfg.textColor / 255);
             Screen('Flip', window);
             tfun('TRIGGER SENT');
             fprintf('[tfun] pulse %d sent\n', i);
@@ -164,7 +164,7 @@ function precheck()
         for i = 1:3
             DrawFormattedText(window, ...
                 sprintf('TTL CHECK\n\nsfun  —  pulse %d / 3', i), ...
-                'center', 'center', 0.2);
+                'center', 'center', cfg.textColor / 255);
             Screen('Flip', window);
             sfun('STIM SENT');
             fprintf('[sfun] pulse %d sent\n', i);
@@ -175,7 +175,7 @@ function precheck()
         % Prompt: retry or continue
         DrawFormattedText(window, ...
             sprintf('TTL: 3 tfun + 3 sfun pulses sent.\n\nPress  ''%s''  to send again,  ''q''  to continue.', cfg.triggerkey), ...
-            'center', 'center', 0.2);
+            'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         KbReleaseWait(-3);
@@ -210,7 +210,7 @@ function precheck()
     cfg.taskMode = 'phase1';
     cfg.subsetId = 'tutorial';
 
-    DrawFormattedText(window, 'Loading images...', 'center', 'center', 0.2);
+    DrawFormattedText(window, 'Loading images...', 'center', 'center', cfg.textColor / 255);
     Screen('Flip', window);
 
     try
@@ -220,7 +220,7 @@ function precheck()
     catch loadErr
         fprintf('[ERROR] Image loading failed: %s\n', loadErr.message);
         DrawFormattedText(window, sprintf('Image load error:\n%s', loadErr.message), ...
-            'center', 'center', 0.2);
+            'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         WaitSecs(2);
         numLoaded = 0;
@@ -232,7 +232,7 @@ function precheck()
         DrawFormattedText(window, ...
             sprintf('Loaded %d images.\n\nPress  ''%s''  to view each image,  ''q''  to continue.', ...
                 numLoaded, cfg.triggerkey), ...
-            'center', 'center', 0.2);
+            'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         KbReleaseWait(-3);
@@ -251,7 +251,7 @@ function precheck()
                     Screen('DrawTexture', window, mooneyImages{imgIdx});
                     DrawFormattedText(window, ...
                         sprintf('%d / %d     ''%s'' = next,  ''q'' = done', imgIdx, numLoaded, cfg.triggerkey), ...
-                        'center', hheight * 0.92, 0.2);
+                        'center', hheight * 0.92, cfg.textColor / 255);
                     Screen('Flip', window);
                     fprintf('[IMG]  Showing image %d / %d\n', imgIdx, numLoaded);
 

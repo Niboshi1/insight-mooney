@@ -2,24 +2,8 @@ function phase1_run(numImages, window, mooneyImages, blockStartTime, cfg, tfun, 
     %% Case 1: Tutorial
     % every step will be controlled by the trigger input from the experiment
     if strcmp(cfg.subsetId, 'tutorial')
-        for trial = 1:numImages
-            % Hand switch instruction every 2 trials
-            if mod(trial, 2) == 1
-                instruction_handswitch(window, cfg, tfun);
-                if strcmp(cfg.handNow, 'left')
-                    cfg.handNow = 'right';
-                elseif strcmp(cfg.handNow, 'right')
-                    cfg.handNow = 'left';
-                else
-                    Error('Current hand not set in config');
-                end
-            end
-            quitNow = phase1_tutorial(window, mooneyImages{trial}, cfg);
-
-            if quitNow
-                return;
-            end
-        end
+        phase1_tutorial(window, mooneyImages, cfg, tfun);
+        return;
 
     %% Case 2: Run the experiment
     else

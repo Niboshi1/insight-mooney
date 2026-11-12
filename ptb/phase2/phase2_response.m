@@ -16,7 +16,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
 
     % Prompt for familiarity
     resptext = 'Have you seen this image before? Yes (1) No (2)';
-    DrawFormattedText(window, resptext, 'center', 'center', .2);
+    DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
     Screen('Flip', window);
     tfun('TEXT_PROMPT_QFAMILIAR'); % send TTL for familiarity prompt
     promptFamiliarTime = GetSecs - blockStartTime;
@@ -48,7 +48,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
 
         % Ask if they were able to identify it
         resptext = 'Were you able to identify it previously? Yes (1) No (2)';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_QRECOGNITION'); % send TTL for recognition prompt
         promptRecognitionTime = GetSecs - blockStartTime;
@@ -81,7 +81,7 @@ function [promptFamiliarTime, keyPressFamiliar, promptRecognitionTime, keyPressR
 
         % Prompt for vocal response
         resptext = 'Please answer what you saw';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_QANSWER'); % send TTL for answer prompt
         promptAnswerTime = GetSecs - blockStartTime;

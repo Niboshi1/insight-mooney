@@ -1,5 +1,7 @@
-function instruction_handswitch(window, cfg, tfun)
+function instruction_handswitch(window, cfg, tfun, headerText)
     % Load image, set instruction text, and compute image rect — all from handNow
+    % Optional headerText is drawn near the top of the screen (tutorial explanations).
+    if nargin < 4; headerText = ''; end
     imgW_pre = cfg.targetWidth;
     cx     = cfg.wwidth / 2;
     margin = 50;
@@ -25,6 +27,9 @@ function instruction_handswitch(window, cfg, tfun)
     imageTexture = Screen('MakeTexture', window, img);
     DrawFormattedText(window, instruct_text, 'center', 'center', cfg.textColor / 255);
     Screen('DrawTexture', window, imageTexture, [], imgRect);
+    if ~isempty(headerText)
+        DrawFormattedText(window, headerText, 'center', cfg.hheight * 0.12, cfg.textColor / 255, 90);
+    end
     Screen('Flip', window);
 
     while true

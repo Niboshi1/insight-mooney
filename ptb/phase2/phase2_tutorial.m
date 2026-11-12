@@ -52,7 +52,7 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     % --- Familiarity prompt ---
     KbReleaseWait(-3);
     resptext = 'Have you seen this image before? Yes (1) No (2)';
-    DrawFormattedText(window, resptext, 'center', 'center', .2);
+    DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
     Screen('Flip', window);
 
     keyPressFamiliar = 0;
@@ -83,7 +83,7 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
 
         KbReleaseWait(-3);
         resptext = 'Were you able to identify it previously? Yes (1) No (2)';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         while true
@@ -113,7 +113,7 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
 
         % Prompt for vocal response
         resptext = 'Please answer what you saw';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         % Wait until triggerkey is pressed (no audio recording in tutorial)
@@ -134,7 +134,7 @@ function quitNow = phase2_tutorial(window, imageTexture, cfg)
     % --- If not familiar or not recognized, prompt to proceed ---
     else
         resptext = 'Please press "1" key to proceed';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
 
         while true

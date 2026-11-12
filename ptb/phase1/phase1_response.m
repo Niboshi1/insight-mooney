@@ -16,7 +16,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
 
         % -- Vocal response --
         resptext = 'Please answer what you saw';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_QANSWER'); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
@@ -60,7 +60,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         ratetext = ['In a scale of 1-5, how did the solution come to you?\n\n' ...
                     '\n\n' ...
                     'sudden (popped out) <-   1   2   3   4   5   -> gradual (figured it out)'];
-        DrawFormattedText(window, ratetext, 'center', 'center', .2);
+        DrawFormattedText(window, ratetext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_SUDDENNESS');
 
@@ -92,7 +92,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
         ratetext = ['In a scale of 1-5, how confident are you in your answer?\n\n' ...
                     '\n\n' ...
                     'Not confident <-   1   2   3   4   5   -> Very confident'];
-        DrawFormattedText(window, ratetext, 'center', 'center', .2);
+        DrawFormattedText(window, ratetext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_CONFIDENCE');
 
@@ -118,7 +118,7 @@ function [promptTime, suddennessRating, suddennessTime, confidenceRating, confid
     else % if not able to solve
         % Prompt for key press TODO: decide on response key
         resptext = 'Please press "1" key to proceed';
-        DrawFormattedText(window, resptext, 'center', 'center', .2);
+        DrawFormattedText(window, resptext, 'center', 'center', cfg.textColor / 255);
         Screen('Flip', window);
         tfun('TEXT_PROMPT_QKEYPRESS'); % send TTL for response prompt
         promptTime = GetSecs - blockStartTime;
